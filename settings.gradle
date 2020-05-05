@@ -1,0 +1,3 @@
+rootProject.name='Mileus SDK'
+include ':sdk'
+include ':sample'

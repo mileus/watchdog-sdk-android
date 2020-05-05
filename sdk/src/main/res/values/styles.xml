@@ -1,0 +1,3 @@
+<resources>
+    <style name="MileusTheme" parent="Theme.AppCompat.Light.NoActionBar"/>
+</resources>
