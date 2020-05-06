@@ -54,8 +54,6 @@ class MileusActivity : AppCompatActivity() {
     private val taxiRideActivityIntent: Intent?
         get() = Mileus.taxiRideActivityIntent
 
-    private var lastLoadedUrl = ""
-
     @SuppressLint("SetJavaScriptEnabled", "SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,7 +100,7 @@ class MileusActivity : AppCompatActivity() {
                     error: WebResourceError?
                 ) {
                     super.onReceivedError(view, request, error)
-                    if (request?.url?.toString() != lastLoadedUrl) {
+                    if (request?.isForMainFrame != true) {
                         return
                     }
                     webview.visibility = View.INVISIBLE
@@ -137,8 +135,7 @@ class MileusActivity : AppCompatActivity() {
     private fun loadWeb() {
         mileus_progress.visibility = View.VISIBLE
         mileus_error.visibility = View.GONE
-        lastLoadedUrl = buildUrl()
-        mileus_webview.loadUrl(lastLoadedUrl)
+        mileus_webview.loadUrl(buildUrl())
     }
 
     private fun updateLocationsInJs() {
