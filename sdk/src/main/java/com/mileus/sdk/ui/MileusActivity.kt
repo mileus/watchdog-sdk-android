@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.res.Resources
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.webkit.*
@@ -53,6 +55,14 @@ class MileusActivity : AppCompatActivity() {
 
     private val taxiRideActivityIntent: Intent?
         get() = Mileus.taxiRideActivityIntent
+
+    private val language: String
+        get() {
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                Resources.getSystem().configuration.locales[0].language
+            else
+                Resources.getSystem().configuration.locale.language
+        }
 
     @SuppressLint("SetJavaScriptEnabled", "SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -210,6 +220,7 @@ class MileusActivity : AppCompatActivity() {
         .appendQueryParameter("partner_name", partnerName)
         .appendQueryParameter("environment", environment)
         .appendQueryParameter("access_token", token)
+        .appendQueryParameter("language", language)
         .appendQueryParameter("platform", "android").run {
             origin?.let {
                 appendQueryParameter("origin_lat", it.latitude.toString())
