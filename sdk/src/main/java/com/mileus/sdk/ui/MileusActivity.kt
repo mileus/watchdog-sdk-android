@@ -2,10 +2,13 @@ package com.mileus.sdk.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.content.res.Resources
-import android.net.Uri
+import android.net.*
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -64,6 +67,20 @@ class MileusActivity : AppCompatActivity() {
                 Resources.getSystem().configuration.locale.language
         }
 
+    private var webview: WebView? = null
+
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(network: Network) {
+            super.onAvailable(network)
+            webview?.post { webview?.setNetworkAvailable(true) }
+        }
+
+        override fun onLost(network: Network) {
+            super.onLost(network)
+            webview?.post { webview?.setNetworkAvailable(false) }
+        }
+    }
+
     @SuppressLint("SetJavaScriptEnabled", "SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,9 +101,9 @@ class MileusActivity : AppCompatActivity() {
         }
 
         val progressBar = mileus_progress
-        val webview = mileus_webview
+        webview = mileus_webview
         val errorLayout = mileus_error
-        webview.apply {
+        webview?.apply {
             settings.javaScriptEnabled = true
             webViewClient = object : WebViewClient() {
                 override fun shouldOverrideUrlLoading(
@@ -99,7 +116,7 @@ class MileusActivity : AppCompatActivity() {
                 override fun onPageFinished(view: WebView?, url: String?) {
                     super.onPageFinished(view, url)
                     if (errorLayout.visibility != View.VISIBLE) {
-                        webview.visibility = View.VISIBLE
+                        webview?.visibility = View.VISIBLE
                     }
                     progressBar.visibility = View.GONE
                 }
@@ -113,7 +130,7 @@ class MileusActivity : AppCompatActivity() {
                     if (request?.isForMainFrame != true) {
                         return
                     }
-                    webview.visibility = View.INVISIBLE
+                    webview?.visibility = View.INVISIBLE
                     errorLayout.visibility = View.VISIBLE
                 }
             }
@@ -128,7 +145,7 @@ class MileusActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             loadWeb()
         } else {
-            webview.restoreState(savedInstanceState)
+            webview?.restoreState(savedInstanceState)
         }
     }
 
@@ -140,6 +157,23 @@ class MileusActivity : AppCompatActivity() {
             it.origin = origin
             it.destination = destination
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
+            .registerNetworkCallback(NetworkRequest.Builder().build(), networkCallback)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        (getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
+            .unregisterNetworkCallback(networkCallback)
+    }
+
+    override fun onDestroy() {
+        webview = null
+        super.onDestroy()
     }
 
     private fun loadWeb() {

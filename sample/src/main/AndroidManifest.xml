@@ -4,6 +4,7 @@
     package="com.mileus.sample">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".MyApplication"
@@ -34,8 +35,7 @@
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
 
-        <activity
-            android:name="com.mileus.sdk.ui.MileusActivity" />
+        <activity android:name="com.mileus.sdk.ui.MileusActivity" />
 
     </application>
 
