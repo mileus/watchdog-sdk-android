@@ -3,6 +3,7 @@ package com.mileus.sample
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import com.mileus.sdk.Mileus
 import com.mileus.sdk.data.Location
 import kotlinx.android.synthetic.main.activity_main.*
@@ -27,24 +28,27 @@ class MainActivity : AppCompatActivity() {
                 apply()
             }
 
-            val originLocation = Location(
-                main_origin_address.text.toString(),
-                main_origin_latitude.text.toString().replace(',', '.').toDouble(),
-                main_origin_longitude.text.toString().replace(',', '.').toDouble()
-            )
+            try {
+                val originLocation = Location(
+                    main_origin_address.text.toString(),
+                    main_origin_latitude.text.toString().replace(',', '.').toDouble(),
+                    main_origin_longitude.text.toString().replace(',', '.').toDouble()
+                )
 
-            val destinationLocation = Location(
-                main_destination_address.text.toString(),
-                main_destination_latitude.text.toString().replace(',', '.').toDouble(),
-                main_destination_longitude.text.toString().replace(',', '.').toDouble()
-            )
-
-            Mileus.startMileusActivity(
-                this,
-                main_token.text.toString(),
-                originLocation,
-                destinationLocation
-            )
+                val destinationLocation = Location(
+                    main_destination_address.text.toString(),
+                    main_destination_latitude.text.toString().replace(',', '.').toDouble(),
+                    main_destination_longitude.text.toString().replace(',', '.').toDouble()
+                )
+                Mileus.startMileusActivity(
+                    this,
+                    main_token.text.toString(),
+                    originLocation,
+                    destinationLocation
+                )
+            } catch (e: NumberFormatException) {
+                Toast.makeText(this, R.string.number_format_error, Toast.LENGTH_LONG).show()
+            }
         }
     }
 }

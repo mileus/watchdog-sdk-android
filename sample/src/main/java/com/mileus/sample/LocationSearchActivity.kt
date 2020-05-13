@@ -1,6 +1,7 @@
 package com.mileus.sample
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.mileus.sdk.Mileus
 import com.mileus.sdk.Mileus.returnLocationAndFinishActivity
@@ -31,13 +32,17 @@ class LocationSearchActivity : AppCompatActivity() {
         }
 
         location_search_done.setOnClickListener {
-            returnLocationAndFinishActivity(
-                Location(
-                    location_search_address.text.toString(),
-                    location_search_latitude.text.toString().toDouble(),
-                    location_search_longitude.text.toString().toDouble()
+            try {
+                returnLocationAndFinishActivity(
+                    Location(
+                        location_search_address.text.toString(),
+                        location_search_latitude.text.toString().toDouble(),
+                        location_search_longitude.text.toString().toDouble()
+                    )
                 )
-            )
+            } catch (e: NumberFormatException) {
+                Toast.makeText(this, R.string.number_format_error, Toast.LENGTH_LONG).show()
+            }
         }
     }
 }
