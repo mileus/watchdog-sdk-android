@@ -1,12 +1,12 @@
-package com.mileus.sdk
+package com.mileus.watchdog
 
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import com.mileus.sdk.data.Location
-import com.mileus.sdk.ui.MileusActivity
+import com.mileus.watchdog.data.Location
+import com.mileus.watchdog.ui.MileusWatchdogActivity
 
-object Mileus {
+object MileusWatchdog {
 
     const val ENV_PRODUCTION = "production"
     const val ENV_STAGING = "staging"
@@ -29,11 +29,14 @@ object Mileus {
     var taxiRideActivityIntent: Intent? = null
 
     fun init(partnerName: String, environment: String = ENV_PRODUCTION) = this.apply {
-        this.partnerName = partnerName
-        if (environment !in arrayOf(ENV_PRODUCTION, ENV_STAGING)) {
+        MileusWatchdog.partnerName = partnerName
+        if (environment !in arrayOf(
+                ENV_PRODUCTION,
+                ENV_STAGING
+            )) {
             throw IllegalArgumentException("Invalid environment.")
         }
-        this.environment = environment
+        MileusWatchdog.environment = environment
     }
 
     fun Activity.returnLocationAndFinishActivity(location: Location) {
@@ -51,7 +54,14 @@ object Mileus {
         origin: Location? = null,
         destination: Location? = null
     ) {
-        context.startActivity(createMileusActivityIntent(context, accessToken, origin, destination))
+        context.startActivity(
+            createMileusActivityIntent(
+                context,
+                accessToken,
+                origin,
+                destination
+            )
+        )
     }
 
     fun createMileusActivityIntent(
@@ -59,7 +69,7 @@ object Mileus {
         accessToken: String,
         origin: Location? = null,
         destination: Location? = null
-    ) = Intent(context, MileusActivity::class.java).updateExtras {
+    ) = Intent(context, MileusWatchdogActivity::class.java).updateExtras {
         token = accessToken
         this.origin = origin
         this.destination = destination

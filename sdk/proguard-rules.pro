@@ -1,16 +1,16 @@
--keep class com.mileus.sdk.Mileus {
+-keep class com.mileus.watchdog.MileusWatchdog {
     public *;
 }
 
--keep class com.mileus.sdk.data.Location {
+-keep class com.mileus.watchdog.data.Location {
     public *;
 }
 
--keep class com.mileus.sdk.ui.MileusActivity {
+-keep class com.mileus.watchdog.ui.MileusWatchdogActivity {
     public *;
     protected *;
 }
 
--keep class com.mileus.sdk.UtilsKt {
+-keep class com.mileus.watchdog.UtilsKt {
     public *;
 }

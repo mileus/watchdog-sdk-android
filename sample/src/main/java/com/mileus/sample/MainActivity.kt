@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.mileus.sdk.Mileus
-import com.mileus.sdk.data.Location
+import com.mileus.watchdog.MileusWatchdog
+import com.mileus.watchdog.data.Location
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
                     main_destination_latitude.text.toString().replace(',', '.').toDouble(),
                     main_destination_longitude.text.toString().replace(',', '.').toDouble()
                 )
-                Mileus.startMileusActivity(
+                MileusWatchdog.startMileusActivity(
                     this,
                     main_token.text.toString(),
                     originLocation,

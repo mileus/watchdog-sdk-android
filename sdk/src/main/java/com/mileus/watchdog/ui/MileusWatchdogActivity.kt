@@ -1,11 +1,9 @@
-package com.mileus.sdk.ui
+package com.mileus.watchdog.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.content.res.Resources
 import android.net.*
@@ -15,10 +13,14 @@ import android.view.View
 import android.webkit.*
 import androidx.appcompat.app.AppCompatActivity
 import com.mileus.sdk.*
-import com.mileus.sdk.data.Location
-import kotlinx.android.synthetic.main.activity_mileus.*
+import com.mileus.watchdog.*
+import com.mileus.watchdog.data.Location
+import com.mileus.watchdog.location
+import com.mileus.watchdog.origin
+import com.mileus.watchdog.token
+import kotlinx.android.synthetic.main.activity_mileus_watchdog.*
 
-class MileusActivity : AppCompatActivity() {
+class MileusWatchdogActivity : AppCompatActivity() {
 
     companion object {
         // "https://watchdog-web-stage.mileus.com/"
@@ -33,31 +35,31 @@ class MileusActivity : AppCompatActivity() {
     private var origin: Location? = null
     private var destination: Location? = null
     private lateinit var token: String
-    private var partnerName = Mileus.partnerName
-    private var environment = Mileus.environment
+    private var partnerName = MileusWatchdog.partnerName
+    private var environment = MileusWatchdog.environment
 
     private val baseUrl: String
         get() = when (environment) {
-            Mileus.ENV_PRODUCTION -> URL_PRODUCTION
+            MileusWatchdog.ENV_PRODUCTION -> URL_PRODUCTION
             else -> URL_STAGING
         }
 
     private val originSearchIntent: Intent?
-        get() = Mileus.originSearchActivityIntent?.updateExtras {
-            currentOrigin = this@MileusActivity.origin
-            currentDestination = this@MileusActivity.destination
-            searchType = Mileus.SEARCH_TYPE_ORIGIN
+        get() = MileusWatchdog.originSearchActivityIntent?.updateExtras {
+            currentOrigin = this@MileusWatchdogActivity.origin
+            currentDestination = this@MileusWatchdogActivity.destination
+            searchType = MileusWatchdog.SEARCH_TYPE_ORIGIN
         }
 
     private val destinationSearchIntent: Intent?
-        get() = Mileus.destinationSearchActivityIntent?.updateExtras {
-            currentOrigin = this@MileusActivity.origin
-            currentDestination = this@MileusActivity.destination
-            searchType = Mileus.SEARCH_TYPE_DESTINATION
+        get() = MileusWatchdog.destinationSearchActivityIntent?.updateExtras {
+            currentOrigin = this@MileusWatchdogActivity.origin
+            currentDestination = this@MileusWatchdogActivity.destination
+            searchType = MileusWatchdog.SEARCH_TYPE_DESTINATION
         }
 
     private val taxiRideActivityIntent: Intent?
-        get() = Mileus.taxiRideActivityIntent
+        get() = MileusWatchdog.taxiRideActivityIntent
 
     private val language: String
         get() {
@@ -84,7 +86,7 @@ class MileusActivity : AppCompatActivity() {
     @SuppressLint("SetJavaScriptEnabled", "SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_mileus)
+        setContentView(R.layout.activity_mileus_watchdog)
         setTheme(R.style.MileusTheme)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
@@ -93,7 +95,7 @@ class MileusActivity : AppCompatActivity() {
         origin = intent.extras?.origin
         destination = intent.extras?.destination
         token = intent.extras?.token ?: throw IllegalStateException("Missing access token.")
-        partnerName = Mileus.partnerName
+        partnerName = MileusWatchdog.partnerName
 
         savedInstanceState?.let {
             it.origin?.let { origin = it }
@@ -135,7 +137,7 @@ class MileusActivity : AppCompatActivity() {
                 }
             }
 
-            addJavascriptInterface(this@MileusActivity, "MileusNative")
+            addJavascriptInterface(this@MileusWatchdogActivity, "MileusNative")
         }
 
         mileus_error_retry.setOnClickListener {
@@ -215,9 +217,13 @@ class MileusActivity : AppCompatActivity() {
     fun openSearchScreen(searchType: String) {
         when (searchType) {
             SEARCH_TYPE_ORIGIN ->
-                startActivityForResult(originSearchIntent, REQUEST_CODE_ORIGIN_SEARCH)
+                startActivityForResult(originSearchIntent,
+                    REQUEST_CODE_ORIGIN_SEARCH
+                )
             SEARCH_TYPE_DESTINATION ->
-                startActivityForResult(destinationSearchIntent, REQUEST_CODE_DESTINATION_SEARCH)
+                startActivityForResult(destinationSearchIntent,
+                    REQUEST_CODE_DESTINATION_SEARCH
+                )
         }
     }
 

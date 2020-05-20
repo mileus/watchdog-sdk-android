@@ -1,8 +1,8 @@
-package com.mileus.sdk
+package com.mileus.watchdog
 
 import android.content.Intent
 import android.os.Bundle
-import com.mileus.sdk.data.Location
+import com.mileus.watchdog.data.Location
 
 internal var Bundle.token: String
     get() = getString(BundleKeys.TOKEN) ?: ""
@@ -23,9 +23,9 @@ internal var Bundle.origin: Location?
     }
 
 var Bundle.currentOrigin: Location?
-    get() = getParcelable(Mileus.CURRENT_ORIGIN_EXTRA)
+    get() = getParcelable(MileusWatchdog.CURRENT_ORIGIN_EXTRA)
     internal set(value) {
-        putParcelable(Mileus.CURRENT_ORIGIN_EXTRA, value)
+        putParcelable(MileusWatchdog.CURRENT_ORIGIN_EXTRA, value)
     }
 
 internal var Bundle.destination: Location?
@@ -35,15 +35,15 @@ internal var Bundle.destination: Location?
     }
 
 var Bundle.currentDestination: Location?
-    get() = getParcelable(Mileus.CURRENT_DESTINATION_EXTRA)
+    get() = getParcelable(MileusWatchdog.CURRENT_DESTINATION_EXTRA)
     internal set(value) {
-        putParcelable(Mileus.CURRENT_DESTINATION_EXTRA, value)
+        putParcelable(MileusWatchdog.CURRENT_DESTINATION_EXTRA, value)
     }
 
 var Bundle.searchType: String?
-    get() = getString(Mileus.SEARCH_TYPE)
+    get() = getString(MileusWatchdog.SEARCH_TYPE)
     set(value) {
-        putString(Mileus.SEARCH_TYPE, value)
+        putString(MileusWatchdog.SEARCH_TYPE, value)
     }
 
 internal object BundleKeys {
