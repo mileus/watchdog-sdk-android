@@ -9,9 +9,9 @@ Add the JitPack repository to your build file:
 ```
 allprojects {
     repositories {
-		...
-		maven { url 'https://www.jitpack.io' }
-	}
+        ...
+        maven { url 'https://www.jitpack.io' }
+    }
 }
 ```
 Add the dependency:
@@ -33,7 +33,7 @@ To make our Activity work please add it to Manifest too:
 First you have to create an instance of Mileus SDK. Place this piece of code in your `Application.onCreate`, alternatively you can call `MileusWatchdog.init()` on demand in your favorite dependency injection framework:
 ``` kotlin
 val mileus = MileusWatchdog.init(
-	partnerName: String, // unique partner identifier
+    partnerName: String, // unique partner identifier
     environment: String // MileusWatchdog.ENV_STAGING or MileusWatchdog.ENV_PRODUCTION
 )
 ```
@@ -71,8 +71,8 @@ mileus.taxiRideActivityIntent = taxiRideIntent
 This is a universal entry point in Mileus SDK. Use it to initialise new search, as well as opening Mileus SDK from notification.
 ``` kotlin
 MileusWatchdog.startMileusActivity(
-	context: Context,
-	accessToken: String, // token from Watchdog auth API
+    context: Context,
+    accessToken: String, // token from Watchdog auth API
     origin: Location? = null,
     destination: Location? = null
 )
@@ -81,8 +81,8 @@ MileusWatchdog.startMileusActivity(
 You can also use Intent or PendingIntent directly. The method above is just a shortcut for creating intent and starting Activity.
 ``` kotlin
 MileusWatchdog.createMileusActivityIntent(
-	context: Context,
-	accessToken: String,
+    context: Context,
+    accessToken: String,
     origin: Location? = null, 
     destination: Location? = null 
 )
