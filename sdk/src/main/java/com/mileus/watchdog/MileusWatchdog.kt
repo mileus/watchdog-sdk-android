@@ -48,14 +48,14 @@ object MileusWatchdog {
         finish()
     }
 
-    fun startMileusActivity(
+    fun startWatchdogActivity(
         context: Context,
         accessToken: String,
         origin: Location? = null,
         destination: Location? = null
     ) {
         context.startActivity(
-            createMileusActivityIntent(
+            createWatchdogActivityIntent(
                 context,
                 accessToken,
                 origin,
@@ -64,7 +64,7 @@ object MileusWatchdog {
         )
     }
 
-    fun createMileusActivityIntent(
+    fun createWatchdogActivityIntent(
         context: Context,
         accessToken: String,
         origin: Location? = null,

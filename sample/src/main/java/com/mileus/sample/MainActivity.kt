@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
                     main_destination_latitude.text.toString().replace(',', '.').toDouble(),
                     main_destination_longitude.text.toString().replace(',', '.').toDouble()
                 )
-                MileusWatchdog.startMileusActivity(
+                MileusWatchdog.startWatchdogActivity(
                     this,
                     main_token.text.toString(),
                     originLocation,
