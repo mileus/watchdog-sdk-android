@@ -8,7 +8,7 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        MileusWatchdog.init("partnerName", MileusWatchdog.ENV_STAGING)
+        MileusWatchdog.init("partnerName", MileusWatchdog.ENV_DEVELOPMENT)
 
         Intent(this, LocationSearchActivity::class.java).also {
             MileusWatchdog.destinationSearchActivityIntent = it

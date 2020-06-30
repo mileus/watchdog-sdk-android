@@ -23,8 +23,8 @@ import kotlinx.android.synthetic.main.activity_mileus_watchdog.*
 class MileusWatchdogActivity : AppCompatActivity() {
 
     companion object {
-        // "https://watchdog-web-stage.mileus.com/"
-        const val URL_STAGING = "https://mileus.spacek.now.sh/"
+        const val URL_DEVELOPMENT = "https://mileus.spacek.now.sh/"
+        const val URL_STAGING = "https://watchdog-web-stage.mileus.com/"
         const val URL_PRODUCTION = "https://watchdog-web.mileus.com/"
         const val REQUEST_CODE_ORIGIN_SEARCH = 2501
         const val REQUEST_CODE_DESTINATION_SEARCH = 2502
@@ -41,7 +41,8 @@ class MileusWatchdogActivity : AppCompatActivity() {
     private val baseUrl: String
         get() = when (environment) {
             MileusWatchdog.ENV_PRODUCTION -> URL_PRODUCTION
-            else -> URL_STAGING
+            MileusWatchdog.ENV_STAGING -> URL_STAGING
+            else -> URL_DEVELOPMENT
         }
 
     private val originSearchIntent: Intent?
@@ -261,7 +262,8 @@ class MileusWatchdogActivity : AppCompatActivity() {
         .appendQueryParameter("environment", environment)
         .appendQueryParameter("access_token", token)
         .appendQueryParameter("language", language)
-        .appendQueryParameter("platform", "android").run {
+        .appendQueryParameter("platform", "android")
+        .appendQueryParameter("mode", "watchdog").run {
             origin?.let {
                 appendQueryParameter("origin_lat", it.latitude.toString())
                 appendQueryParameter("origin_lon", it.longitude.toString())

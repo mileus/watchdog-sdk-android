@@ -10,6 +10,7 @@ object MileusWatchdog {
 
     const val ENV_PRODUCTION = "production"
     const val ENV_STAGING = "staging"
+    const val ENV_DEVELOPMENT = "development"
 
     const val CURRENT_ORIGIN_EXTRA = "CURRENT_ORIGIN_EXTRA"
     const val CURRENT_DESTINATION_EXTRA = "CURRENT_DESTINATION_EXTRA"
@@ -32,7 +33,8 @@ object MileusWatchdog {
         MileusWatchdog.partnerName = partnerName
         if (environment !in arrayOf(
                 ENV_PRODUCTION,
-                ENV_STAGING
+                ENV_STAGING,
+                ENV_DEVELOPMENT
             )) {
             throw IllegalArgumentException("Invalid environment.")
         }
