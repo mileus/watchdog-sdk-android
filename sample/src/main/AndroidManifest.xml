@@ -34,6 +34,8 @@
 
         <activity android:name="com.mileus.watchdog.ui.MileusWatchdogActivity" />
 
+        <activity android:name="com.mileus.watchdog.ui.MileusMarketValidationActivity" />
+
     </application>
 
 </manifest>

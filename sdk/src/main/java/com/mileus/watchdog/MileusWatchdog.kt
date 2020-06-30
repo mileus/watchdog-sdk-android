@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import com.mileus.watchdog.data.Location
+import com.mileus.watchdog.ui.MileusMarketValidationActivity
 import com.mileus.watchdog.ui.MileusWatchdogActivity
 
 object MileusWatchdog {
@@ -35,7 +36,8 @@ object MileusWatchdog {
                 ENV_PRODUCTION,
                 ENV_STAGING,
                 ENV_DEVELOPMENT
-            )) {
+            )
+        ) {
             throw IllegalArgumentException("Invalid environment.")
         }
         MileusWatchdog.environment = environment
@@ -57,12 +59,7 @@ object MileusWatchdog {
         destination: Location? = null
     ) {
         context.startActivity(
-            createWatchdogActivityIntent(
-                context,
-                accessToken,
-                origin,
-                destination
-            )
+            createWatchdogActivityIntent(context, accessToken, origin, destination)
         )
     }
 
@@ -72,6 +69,28 @@ object MileusWatchdog {
         origin: Location? = null,
         destination: Location? = null
     ) = Intent(context, MileusWatchdogActivity::class.java).updateExtras {
+        token = accessToken
+        this.origin = origin
+        this.destination = destination
+    }
+
+    fun startMarketValidationActivity(
+        context: Context,
+        accessToken: String,
+        origin: Location? = null,
+        destination: Location? = null
+    ) {
+        context.startActivity(
+            createMarketValidationActivityIntent(context, accessToken, origin, destination)
+        )
+    }
+
+    fun createMarketValidationActivityIntent(
+        context: Context,
+        accessToken: String,
+        origin: Location? = null,
+        destination: Location? = null
+    ) = Intent(context, MileusMarketValidationActivity::class.java).updateExtras {
         token = accessToken
         this.origin = origin
         this.destination = destination
