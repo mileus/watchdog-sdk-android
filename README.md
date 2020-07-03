@@ -38,7 +38,50 @@ val mileus = MileusWatchdog.init(
 )
 ```
 
+## Start Mileus SDK Watchdog screen
+This is a universal entry point in Mileus SDK Watchdog. Use it to initialise new search, as well as opening Mileus SDK Watchdog from notification.
+``` kotlin
+MileusWatchdog.startWatchdogActivity(
+    context: Context,
+    accessToken: String, // token from Watchdog auth API
+    origin: Location? = null,
+    destination: Location? = null
+)
+```
+
+You can also use Intent or PendingIntent directly. The method above is just a shortcut for creating intent and starting Activity.
+``` kotlin
+MileusWatchdog.createWatchdogActivityIntent(
+    context: Context,
+    accessToken: String,
+    origin: Location? = null, 
+    destination: Location? = null 
+)
+```
+
+## Start Mileus SDK Market Validation screen
+Special entry point for market validation purposes. In this mode no callbacks are called. You only need to init Mileus SDK and use one of the following methods to open the market validation screen.
+``` kotlin
+MileusWatchdog.startMarketValidationActivity(
+    context: Context,
+    accessToken: String, // token from Watchdog auth API
+    origin: Location,
+    destination: Location
+)
+```
+
+You can also use Intent or PendingIntent directly. The method above is just a shortcut for creating intent and starting Activity.
+``` kotlin
+MileusWatchdog.createMarketValidationActivityIntent(
+    context: Context,
+    accessToken: String,
+    origin: Location, 
+    destination: Location 
+)
+```
+
 ## Handle callbacks
+Callbacks are relevant only for Mileus SDK Watchdog screen usage, not for Mileus SDK Market Validation screen usage.
 
 ### Search for origin or destination
 When your app has native screen for origin and destination search, configure Intents to open these activities:
@@ -65,27 +108,6 @@ MileusWatchdog.returnLocationAndFinishActivity(location: Location)
 We need to open a taxi ride Activity on the last screen in Mileus flow. Set intent we can use to start your native Activity, you can add any extras and flags, there are no special Mileus extras:
 ``` kotlin
 mileus.taxiRideActivityIntent = taxiRideIntent
-```
-
-## Start Mileus SDK screen
-This is a universal entry point in Mileus SDK. Use it to initialise new search, as well as opening Mileus SDK from notification.
-``` kotlin
-MileusWatchdog.startMileusActivity(
-    context: Context,
-    accessToken: String, // token from Watchdog auth API
-    origin: Location? = null,
-    destination: Location? = null
-)
-```
-
-You can also use Intent or PendingIntent directly. The method above is just a shortcut for creating intent and starting Activity.
-``` kotlin
-MileusWatchdog.createMileusActivityIntent(
-    context: Context,
-    accessToken: String,
-    origin: Location? = null, 
-    destination: Location? = null 
-)
 ```
 
 ## Location Data class
