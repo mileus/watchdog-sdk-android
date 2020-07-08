@@ -38,7 +38,7 @@ class MileusWatchdogActivity : MileusActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        webview?.addJavascriptInterface(this@MileusWatchdogActivity, "MileusNative")
+        webview?.addJavascriptInterface(this, "MileusNative")
     }
 
     private fun updateLocationsInJs() {
