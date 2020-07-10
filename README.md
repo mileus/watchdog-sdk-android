@@ -21,11 +21,12 @@ dependencies {
 }
 ```
 
-## Add activity to manifest
+## Add activities to manifest
 To make our Activity work please add it to Manifest too:
 ```
 <application …>
     <activity android:name="com.mileus.watchdog.ui.MileusWatchdogActivity" />
+    <activity android:name="com.mileus.watchdog.ui.MileusMarketValidationActivity" />
 </application>
 ```
 
