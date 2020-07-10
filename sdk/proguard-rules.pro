@@ -11,6 +11,11 @@
     protected *;
 }
 
+-keep class com.mileus.watchdog.ui.MileusMarketValidationActivity {
+    public *;
+    protected *;
+}
+
 -keep class com.mileus.watchdog.UtilsKt {
     public *;
 }
