@@ -35,3 +35,25 @@ ext {
         return tag
     }
 }
+
+android.applicationVariants.all { variant ->
+    def versionTag
+    if (variant.buildType.name == 'debug') {
+        versionTag = getVersionTag('alpha')
+    } else {
+        versionTag = getVersionTag(variant.buildType.name)
+    }
+
+    def myVersionCode = getVersionCode(versionTag)
+    def myVersionName = getVersionName(versionTag)
+
+    println variant.name + "[" + myVersionCode + ", " + myVersionName + "]"
+
+    variant.outputs.all { output ->
+        output.versionCodeOverride = myVersionCode
+        output.versionNameOverride = myVersionName
+    }
+
+    variant.buildConfigField "int", "VERSION_CODE_REAL", "${myVersionCode}"
+    variant.buildConfigField "String", "VERSION_NAME_REAL", "\"${myVersionName}\""
+}
