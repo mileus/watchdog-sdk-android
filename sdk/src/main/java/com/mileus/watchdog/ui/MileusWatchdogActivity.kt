@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.webkit.JavascriptInterface
+import com.mileus.sdk.R
 import com.mileus.watchdog.*
 import kotlinx.android.synthetic.main.activity_mileus_watchdog.*
 
@@ -17,6 +18,9 @@ class MileusWatchdogActivity : MileusActivity() {
     }
 
     override val mode = "watchdog"
+
+    override val toolbarText: String
+        get() = resources.getString(R.string.market_validation_title)
 
     private val originSearchIntent: Intent?
         get() = MileusWatchdog.originSearchActivityIntent?.updateExtras {

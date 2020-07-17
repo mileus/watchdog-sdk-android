@@ -51,6 +51,8 @@ abstract class MileusActivity : AppCompatActivity() {
 
     protected var webview: WebView? = null
 
+    protected abstract val toolbarText: String
+
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
@@ -71,6 +73,7 @@ abstract class MileusActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         mileus_toolbar.setNavigationOnClickListener { finish() }
+        mileus_toolbar.title = toolbarText
 
         origin = intent.extras?.origin
         destination = intent.extras?.destination

@@ -2,4 +2,6 @@
     <string name="webview_load_error_title">Something went wrong</string>
     <string name="webview_load_error">Check your internet connection and try again later.</string>
     <string name="webview_retry">Try again</string>
+
+    <string name="market_validation_title">Public transport + Taxi</string>
 </resources>
