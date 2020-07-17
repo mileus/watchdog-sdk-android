@@ -12,6 +12,7 @@
         android:id="@+id/mileus_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
+        android:background="@color/colorToolbar"
         app:navigationIcon="@drawable/ic_close" />
 
     <FrameLayout

@@ -68,8 +68,8 @@ abstract class MileusActivity : AppCompatActivity() {
     @SuppressLint("SetJavaScriptEnabled", "SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_mileus_watchdog)
         setTheme(R.style.MileusTheme)
+        setContentView(R.layout.activity_mileus_watchdog)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         mileus_toolbar.setNavigationOnClickListener { finish() }
