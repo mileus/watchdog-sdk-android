@@ -1,3 +1,5 @@
 <resources>
-    <style name="MileusTheme" parent="Theme.AppCompat.Light.NoActionBar"/>
+    <style name="MileusTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:statusBarColor">#000</item>
+    </style>
 </resources>
