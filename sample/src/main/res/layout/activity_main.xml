@@ -20,9 +20,12 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:hint="Access token"
+            app:layout_constraintBottom_toTopOf="@id/main_partner_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <EditText
             android:id="@+id/main_partner_name"
@@ -33,6 +36,7 @@
             android:layout_marginEnd="8dp"
             android:hint="Partner name"
             android:text="demo"
+            app:layout_constraintBottom_toTopOf="@id/main_origin_address"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/main_token" />
@@ -46,6 +50,7 @@
             android:layout_marginEnd="8dp"
             android:hint="Origin address"
             android:text="Prague centre"
+            app:layout_constraintBottom_toTopOf="@id/main_origin_latitude"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/main_partner_name" />
@@ -60,6 +65,7 @@
             android:hint="Origin latitude"
             android:inputType="numberDecimal|numberSigned"
             android:text="50.091266"
+            app:layout_constraintBottom_toTopOf="@id/main_origin_longitude"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/main_origin_address" />
@@ -74,6 +80,7 @@
             android:hint="Origin longitude"
             android:inputType="numberDecimal|numberSigned"
             android:text="14.438927"
+            app:layout_constraintBottom_toTopOf="@id/main_destination_address"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/main_origin_latitude" />
@@ -87,6 +94,7 @@
             android:layout_marginEnd="8dp"
             android:hint="Destination address"
             android:text="Not Prague centre"
+            app:layout_constraintBottom_toTopOf="@id/main_destination_latitude"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/main_origin_longitude" />
@@ -101,6 +109,7 @@
             android:hint="Destination latitude"
             android:inputType="numberDecimal|numberSigned"
             android:text="50.121765"
+            app:layout_constraintBottom_toTopOf="@id/main_destination_longitude"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/main_destination_address" />
@@ -115,6 +124,7 @@
             android:hint="Destination longitude"
             android:inputType="numberDecimal|numberSigned"
             android:text="14.489431"
+            app:layout_constraintBottom_toTopOf="@id/main_open_market_validation_activity"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/main_destination_latitude" />
@@ -138,9 +148,7 @@
             android:layout_margin="8dp"
             android:text="Watchdog"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/main_destination_longitude"
-            app:layout_constraintVertical_bias="1" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
