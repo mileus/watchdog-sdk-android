@@ -12,6 +12,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val KEY_TOKEN = "KEY_TOKEN"
+        private const val KEY_PARTNER_NAME = "KEY_PARTNER_NAME"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,7 +20,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         getPreferences(Context.MODE_PRIVATE).apply {
-            main_token.setText(getString(KEY_TOKEN, "").orEmpty())
+            main_token.setText(getString(KEY_TOKEN, ""))
+            main_partner_name.setText(getString(KEY_PARTNER_NAME, "demo"))
         }
 
         main_open_watchdog_activity.setOnClickListener {
@@ -38,8 +40,12 @@ class MainActivity : AppCompatActivity() {
     private fun handleButtonClick(
         callback: (token: String, origin: Location, destination: Location) -> Unit
     ) {
+
+        val token = main_token.text.toString()
+        val partnerName = main_partner_name.text.toString()
         getPreferences(Context.MODE_PRIVATE).edit().apply {
-            putString(KEY_TOKEN, main_token.text.toString())
+            putString(KEY_TOKEN, token)
+            putString(KEY_PARTNER_NAME, partnerName)
             apply()
         }
 
@@ -55,8 +61,13 @@ class MainActivity : AppCompatActivity() {
                 main_destination_latitude.text.toString().replace(',', '.').toDouble(),
                 main_destination_longitude.text.toString().replace(',', '.').toDouble()
             )
+
+            // this would typically be only called in your Application implementation,
+            // we are calling it here because we want to test different "partner names" in this sample app
+            MileusWatchdog.init(partnerName, MileusWatchdog.ENV_DEVELOPMENT)
+
             callback(
-                main_token.text.toString(),
+                token,
                 originLocation,
                 destinationLocation
             )
