@@ -17,7 +17,7 @@ allprojects {
 Add the dependency:
 ```
 dependencies {
-    implementation 'com.mileus:watchdog-sdk-android:1.0.2'
+    implementation 'com.mileus:watchdog-sdk-android:1.0.3'
 }
 ```
 
