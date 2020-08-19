@@ -36,10 +36,22 @@
             android:layout_marginEnd="8dp"
             android:hint="Partner name"
             android:text="demo"
-            app:layout_constraintBottom_toTopOf="@id/main_origin_address"
+            app:layout_constraintBottom_toTopOf="@id/main_env"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/main_token" />
+
+        <Spinner
+            android:id="@+id/main_env"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toTopOf="@id/main_origin_address"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/main_partner_name" />
 
         <EditText
             android:id="@+id/main_origin_address"
@@ -53,7 +65,7 @@
             app:layout_constraintBottom_toTopOf="@id/main_origin_latitude"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/main_partner_name" />
+            app:layout_constraintTop_toBottomOf="@id/main_env" />
 
         <EditText
             android:id="@+id/main_origin_latitude"

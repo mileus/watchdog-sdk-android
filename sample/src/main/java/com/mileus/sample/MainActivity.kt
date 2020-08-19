@@ -3,6 +3,7 @@ package com.mileus.sample
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.mileus.watchdog.MileusWatchdog
 import com.mileus.watchdog.data.Location
@@ -22,6 +23,19 @@ class MainActivity : AppCompatActivity() {
         getPreferences(Context.MODE_PRIVATE).apply {
             main_token.setText(getString(KEY_TOKEN, ""))
             main_partner_name.setText(getString(KEY_PARTNER_NAME, "demo"))
+        }
+
+        main_env.apply {
+            adapter = ArrayAdapter(
+                context,
+                android.R.layout.simple_spinner_dropdown_item,
+                listOf(
+                    MileusWatchdog.ENV_DEVELOPMENT,
+                    MileusWatchdog.ENV_STAGING,
+                    MileusWatchdog.ENV_PRODUCTION
+                )
+            )
+            setSelection(1)
         }
 
         main_open_watchdog_activity.setOnClickListener {
@@ -64,7 +78,7 @@ class MainActivity : AppCompatActivity() {
 
             // this would typically be only called in your Application implementation,
             // we are calling it here because we want to test different "partner names" in this sample app
-            MileusWatchdog.init(partnerName, MileusWatchdog.ENV_DEVELOPMENT)
+            MileusWatchdog.init(partnerName, main_env.selectedItem.toString())
 
             callback(
                 token,
