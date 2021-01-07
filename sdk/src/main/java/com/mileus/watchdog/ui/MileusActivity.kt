@@ -28,6 +28,7 @@ abstract class MileusActivity : AppCompatActivity() {
 
     protected var origin: Location? = null
     protected var destination: Location? = null
+    protected var home: Location? = null
     protected lateinit var token: String
     protected var partnerName = MileusWatchdog.partnerName
     protected var environment = MileusWatchdog.environment
@@ -77,6 +78,7 @@ abstract class MileusActivity : AppCompatActivity() {
 
         origin = intent.extras?.origin
         destination = intent.extras?.destination
+        home = intent.extras?.home
         token = intent.extras?.token ?: throw IllegalStateException("Missing access token.")
         partnerName = MileusWatchdog.partnerName
 
@@ -172,16 +174,30 @@ abstract class MileusActivity : AppCompatActivity() {
         .appendQueryParameter("access_token", token)
         .appendQueryParameter("language", language)
         .appendQueryParameter("platform", "android")
-        .appendQueryParameter("mode", mode).run {
+        .appendQueryParameter("screen", mode).run {
             origin?.let {
                 appendQueryParameter("origin_lat", it.latitude.toString())
                 appendQueryParameter("origin_lon", it.longitude.toString())
-                appendQueryParameter("origin_address", it.address)
+                appendQueryParameter("origin_address_line_1", it.addressLine1)
+                it.addressLine2?.let { line2 ->
+                    appendQueryParameter("origin_address_line_2", line2)
+                }
             }
             destination?.let {
                 appendQueryParameter("destination_lat", it.latitude.toString())
                 appendQueryParameter("destination_lon", it.longitude.toString())
-                appendQueryParameter("destination_address", it.address)
+                appendQueryParameter("destination_address_line_1", it.addressLine1)
+                it.addressLine2?.let { line2 ->
+                    appendQueryParameter("destination_address_line_2", line2)
+                }
+            }
+            home?.let {
+                appendQueryParameter("home_lat", it.latitude.toString())
+                appendQueryParameter("home_lon", it.longitude.toString())
+                appendQueryParameter("home_address_line_1", it.addressLine1)
+                it.addressLine2?.let { line2 ->
+                    appendQueryParameter("home_address_line_2", line2)
+                }
             }
             build().toString()
         }

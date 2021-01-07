@@ -66,12 +66,14 @@ class MainActivity : AppCompatActivity() {
         try {
             val originLocation = Location(
                 main_origin_address.text.toString(),
+                "",
                 main_origin_latitude.text.toString().replace(',', '.').toDouble(),
                 main_origin_longitude.text.toString().replace(',', '.').toDouble()
             )
 
             val destinationLocation = Location(
                 main_destination_address.text.toString(),
+                "",
                 main_destination_latitude.text.toString().replace(',', '.').toDouble(),
                 main_destination_longitude.text.toString().replace(',', '.').toDouble()
             )

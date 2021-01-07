@@ -52,7 +52,7 @@ class MileusWatchdogActivity : MileusActivity() {
                     window.setOrigin({
                         lat: ${it.latitude},
                         lon: ${it.longitude},
-                        address: '${it.address.sanitize()}',
+                        address: '${it.addressLine1.sanitize()}',
                         accuracy: ${it.accuracy}
                     });
                 """.trimIndent(),
@@ -65,7 +65,7 @@ class MileusWatchdogActivity : MileusActivity() {
                     window.setDestination({
                         lat: ${it.latitude},
                         lon: ${it.longitude},
-                        address: '${it.address.sanitize()}',
+                        address: '${it.addressLine1.sanitize()}',
                         accuracy: ${it.accuracy}
                     });
                 """.trimIndent(),

@@ -20,12 +20,12 @@ class LocationSearchActivity : AppCompatActivity() {
         val extras = intent.extras ?: throw IllegalStateException("Arguments cannot be null")
         when (extras.searchType) {
             MileusWatchdog.SEARCH_TYPE_ORIGIN -> {
-                location_search_address.setText(extras.currentOrigin?.address)
+                location_search_address.setText(extras.currentOrigin?.addressLine1)
                 location_search_latitude.setText(extras.currentOrigin?.latitude?.toString())
                 location_search_longitude.setText(extras.currentOrigin?.longitude?.toString())
             }
             MileusWatchdog.SEARCH_TYPE_DESTINATION -> {
-                location_search_address.setText(extras.currentDestination?.address)
+                location_search_address.setText(extras.currentDestination?.addressLine1)
                 location_search_latitude.setText(extras.currentDestination?.latitude?.toString())
                 location_search_longitude.setText(extras.currentDestination?.longitude?.toString())
             }
@@ -36,6 +36,7 @@ class LocationSearchActivity : AppCompatActivity() {
                 returnLocationAndFinishActivity(
                     Location(
                         location_search_address.text.toString(),
+                        "", // todo add address line 2 to UI
                         location_search_latitude.text.toString().toDouble(),
                         location_search_longitude.text.toString().toDouble()
                     )

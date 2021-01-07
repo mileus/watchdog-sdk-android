@@ -40,6 +40,12 @@ var Bundle.currentDestination: Location?
         putParcelable(MileusWatchdog.CURRENT_DESTINATION_EXTRA, value)
     }
 
+internal var Bundle.home: Location?
+    get() = getParcelable(BundleKeys.HOME)
+    set(value) {
+        putParcelable(BundleKeys.HOME, value)
+    }
+
 var Bundle.searchType: String?
     get() = getString(MileusWatchdog.SEARCH_TYPE)
     set(value) {
@@ -51,6 +57,7 @@ internal object BundleKeys {
     const val LOCATION = "LOCATION"
     const val ORIGIN = "ORIGIN"
     const val DESTINATION = "DESTINATION"
+    const val HOME = "HOME"
 }
 
 internal fun Intent.updateExtras(block: Bundle.() -> Unit) = apply {

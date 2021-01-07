@@ -6,6 +6,7 @@ import android.content.Intent
 import com.mileus.watchdog.data.Location
 import com.mileus.watchdog.ui.MileusMarketValidationActivity
 import com.mileus.watchdog.ui.MileusWatchdogActivity
+import com.mileus.watchdog.ui.MileusWatchdogSchedulingActivity
 
 object MileusWatchdog {
 
@@ -30,7 +31,7 @@ object MileusWatchdog {
 
     var taxiRideActivityIntent: Intent? = null
 
-    fun init(partnerName: String, environment: String = ENV_PRODUCTION) = this.apply {
+    fun init(partnerName: String, environment: String = ENV_PRODUCTION) {
         MileusWatchdog.partnerName = partnerName
         if (environment !in arrayOf(
                 ENV_PRODUCTION,
@@ -72,6 +73,23 @@ object MileusWatchdog {
         token = accessToken
         this.origin = origin
         this.destination = destination
+    }
+
+    fun startWatchdogSchedulingActivity(
+        context: Context,
+        accessToken: String,
+        home: Location? = null
+    ) {
+        context.startActivity(createWatchdogSchedulingActivityIntent(context, accessToken, home))
+    }
+
+    fun createWatchdogSchedulingActivityIntent(
+        context: Context,
+        accessToken: String,
+        home: Location? = null
+    ) = Intent(context, MileusWatchdogSchedulingActivity::class.java).updateExtras {
+        token = accessToken
+        this.home = home
     }
 
     fun startMarketValidationActivity(
