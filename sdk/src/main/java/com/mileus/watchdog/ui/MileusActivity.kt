@@ -1,6 +1,7 @@
 package com.mileus.watchdog.ui
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -186,6 +187,30 @@ abstract class MileusActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                MileusWatchdogActivity.REQUEST_CODE_ORIGIN_SEARCH -> {
+                    origin = data?.extras?.location
+                    updateLocationsInJs()
+                    return
+                }
+                MileusWatchdogActivity.REQUEST_CODE_DESTINATION_SEARCH -> {
+                    destination = data?.extras?.location
+                    updateLocationsInJs()
+                    return
+                }
+                MileusWatchdogActivity.REQUEST_CODE_HOME_SEARCH -> {
+                    home = data?.extras?.location
+                    updateLocationsInJs()
+                    return
+                }
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun loadWeb() {
