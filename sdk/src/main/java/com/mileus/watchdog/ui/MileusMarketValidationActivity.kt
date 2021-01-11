@@ -11,12 +11,6 @@ class MileusMarketValidationActivity : MileusActivity() {
     override val toolbarText: String
         get() = resources.getString(R.string.market_validation_title)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        webview?.addJavascriptInterface(this, "MileusNative")
-    }
-
     @JavascriptInterface
     fun finishMarketValidation() = finish()
 }

@@ -46,6 +46,12 @@ internal var Bundle.home: Location?
         putParcelable(BundleKeys.HOME, value)
     }
 
+var Bundle.currentHome: Location?
+    get() = getParcelable(MileusWatchdog.CURRENT_HOME_EXTRA)
+    internal set(value) {
+        putParcelable(MileusWatchdog.CURRENT_HOME_EXTRA, value)
+    }
+
 var Bundle.searchType: String?
     get() = getString(MileusWatchdog.SEARCH_TYPE)
     set(value) {

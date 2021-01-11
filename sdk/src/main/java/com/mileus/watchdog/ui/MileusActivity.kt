@@ -91,6 +91,7 @@ abstract class MileusActivity : AppCompatActivity() {
         webview = mileus_webview
         val errorLayout = mileus_error
         webview?.apply {
+            addJavascriptInterface(this@MileusActivity, "MileusNative")
             settings.javaScriptEnabled = true
             webViewClient = object : WebViewClient() {
                 override fun shouldOverrideUrlLoading(
@@ -136,7 +137,7 @@ abstract class MileusActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        mileus_webview.saveState(outState)
+        webview?.saveState(outState)
 
         outState.let {
             it.origin = origin
@@ -161,10 +162,18 @@ abstract class MileusActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    override fun onBackPressed() {
+        webview?.evaluateJavascript("window.handleBackEvent()") {
+            if (it != "true") {
+                finish()
+            }
+        }
+    }
+
     private fun loadWeb() {
         mileus_progress.visibility = View.VISIBLE
         mileus_error.visibility = View.GONE
-        mileus_webview.loadUrl(buildUrl())
+        webview?.loadUrl(buildUrl())
     }
 
     private fun buildUrl() = Uri.parse(baseUrl)
