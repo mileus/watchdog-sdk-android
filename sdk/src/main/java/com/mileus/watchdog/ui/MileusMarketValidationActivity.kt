@@ -8,7 +8,7 @@ class MileusMarketValidationActivity : MileusActivity() {
 
     override val mode = "market_validation"
 
-    override val toolbarText: String
+    override val defaultToolbarText: String
         get() = resources.getString(R.string.market_validation_title)
 
     @JavascriptInterface

@@ -18,7 +18,7 @@ class MileusWatchdogActivity : MileusActivity() {
 
     override val mode = "watchdog"
 
-    override val toolbarText: String
+    override val defaultToolbarText: String
         get() = resources.getString(R.string.market_validation_title)
 
     private val taxiRideActivityIntent: Intent?

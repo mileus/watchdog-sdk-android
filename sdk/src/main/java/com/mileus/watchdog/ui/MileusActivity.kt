@@ -21,7 +21,6 @@ import com.mileus.sdk.R
 import com.mileus.watchdog.*
 import com.mileus.watchdog.data.Location
 import kotlinx.android.synthetic.main.activity_mileus_watchdog.*
-import java.util.jar.Manifest
 
 abstract class MileusActivity : AppCompatActivity() {
 
@@ -72,7 +71,8 @@ abstract class MileusActivity : AppCompatActivity() {
 
     protected var webview: WebView? = null
 
-    protected abstract val toolbarText: String
+    protected abstract val defaultToolbarText: String
+    private var toolbarText: String? = null
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
@@ -86,6 +86,12 @@ abstract class MileusActivity : AppCompatActivity() {
         }
     }
 
+    private var Bundle.toolbarText: String?
+        get() = getString("toolbar")
+        set(value) {
+            putString("toolbar", value)
+        }
+
     @SuppressLint("SetJavaScriptEnabled", "SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,7 +100,7 @@ abstract class MileusActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         mileus_toolbar.setNavigationOnClickListener { finish() }
-        mileus_toolbar.title = toolbarText
+        mileus_toolbar.title = toolbarText ?: defaultToolbarText
 
         origin = intent.extras?.origin
         destination = intent.extras?.destination
@@ -106,6 +112,7 @@ abstract class MileusActivity : AppCompatActivity() {
             it.origin?.let { origin = it }
             it.destination?.let { destination = it }
             it.home?.let { home = it }
+            it.toolbarText?.let { toolbarText = it }
         }
 
         val progressBar = mileus_progress
@@ -164,6 +171,7 @@ abstract class MileusActivity : AppCompatActivity() {
             it.origin = origin
             it.destination = destination
             it.home = home
+            it.toolbarText = toolbarText
         }
     }
 
@@ -220,6 +228,12 @@ abstract class MileusActivity : AppCompatActivity() {
         mileus_progress.visibility = View.VISIBLE
         mileus_error.visibility = View.GONE
         webview?.loadUrl(buildUrl())
+    }
+
+    @JavascriptInterface
+    fun setToolbarTitle(title: String) {
+        toolbarText = title
+        mileus_toolbar.title = title
     }
 
     @JavascriptInterface
