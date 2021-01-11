@@ -7,5 +7,4 @@ class MileusWatchdogSchedulingActivity : MileusActivity() {
     override val toolbarText: String
         get() = "todo implement toolbar title api"
 
-
 }

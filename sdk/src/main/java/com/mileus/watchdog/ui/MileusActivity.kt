@@ -2,6 +2,7 @@ package com.mileus.watchdog.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Resources
 import android.net.ConnectivityManager
@@ -39,6 +40,21 @@ abstract class MileusActivity : AppCompatActivity() {
             MileusWatchdog.ENV_STAGING -> URL_STAGING
             else -> URL_DEVELOPMENT
         }
+
+    private val originSearchIntent: Intent?
+        get() = MileusWatchdog.originSearchActivityIntent?.forSearchActivity(
+            MileusWatchdog.SEARCH_TYPE_ORIGIN
+        )
+
+    private val destinationSearchIntent: Intent?
+        get() = MileusWatchdog.destinationSearchActivityIntent?.forSearchActivity(
+            MileusWatchdog.SEARCH_TYPE_DESTINATION
+        )
+
+    private val homeSearchIntent: Intent?
+        get() = MileusWatchdog.homeSearchActivityIntent?.forSearchActivity(
+            MileusWatchdog.SEARCH_TYPE_HOME
+        )
 
     protected abstract val mode: String
 
@@ -85,6 +101,7 @@ abstract class MileusActivity : AppCompatActivity() {
         savedInstanceState?.let {
             it.origin?.let { origin = it }
             it.destination?.let { destination = it }
+            it.home?.let { home = it }
         }
 
         val progressBar = mileus_progress
@@ -142,6 +159,7 @@ abstract class MileusActivity : AppCompatActivity() {
         outState.let {
             it.origin = origin
             it.destination = destination
+            it.home = home
         }
     }
 
@@ -174,6 +192,71 @@ abstract class MileusActivity : AppCompatActivity() {
         mileus_progress.visibility = View.VISIBLE
         mileus_error.visibility = View.GONE
         webview?.loadUrl(buildUrl())
+    }
+
+    @JavascriptInterface
+    fun openSearchScreen(searchType: String) {
+        when (searchType) {
+            MileusWatchdogActivity.SEARCH_TYPE_ORIGIN ->
+                startActivityForResult(
+                    originSearchIntent,
+                    MileusWatchdogActivity.REQUEST_CODE_ORIGIN_SEARCH
+                )
+            MileusWatchdogActivity.SEARCH_TYPE_DESTINATION ->
+                startActivityForResult(
+                    destinationSearchIntent,
+                    MileusWatchdogActivity.REQUEST_CODE_DESTINATION_SEARCH
+                )
+            MileusWatchdogActivity.SEARCH_TYPE_HOME ->
+                startActivityForResult(
+                    homeSearchIntent,
+                    MileusWatchdogActivity.REQUEST_CODE_HOME_SEARCH
+                )
+        }
+    }
+
+    protected fun updateLocationsInJs() {
+        origin?.let {
+            webview?.evaluateJavascript(
+                """
+                    window.setOrigin({
+                        lat: ${it.latitude},
+                        lon: ${it.longitude},
+                        address_line_1: '${it.addressLine1.sanitize()}',
+                        address_line_2: '${it.addressLine2?.sanitize() ?: ""}',
+                        accuracy: ${it.accuracy}
+                    });
+                """.trimIndent(),
+                null
+            )
+        }
+        destination?.let {
+            webview?.evaluateJavascript(
+                """
+                    window.setDestination({
+                        lat: ${it.latitude},
+                        lon: ${it.longitude},
+                        address_line_1: '${it.addressLine1.sanitize()}',
+                        address_line_2: '${it.addressLine2?.sanitize() ?: ""}',
+                        accuracy: ${it.accuracy}
+                    });
+                """.trimIndent(),
+                null
+            )
+        }
+        home?.let {
+            webview?.evaluateJavascript(
+                """
+                    window.setHome({
+                        lat: ${it.latitude},
+                        lon: ${it.longitude},
+                        address_line_1: '${it.addressLine1.sanitize()}',
+                        address_line_2: '${it.addressLine2?.sanitize() ?: ""}',
+                        accuracy: ${it.accuracy}
+                    });
+                """.trimIndent(),
+            null)
+        }
     }
 
     private fun buildUrl() = Uri.parse(baseUrl)
@@ -210,6 +293,13 @@ abstract class MileusActivity : AppCompatActivity() {
             }
             build().toString()
         }
+
+    private fun Intent.forSearchActivity(searchType: String) = updateExtras {
+        currentOrigin = this@MileusActivity.origin
+        currentDestination = this@MileusActivity.destination
+        currentHome = this@MileusActivity.home
+        this.searchType = searchType
+    }
 
     protected fun String.sanitize() = replace("\\", "\\\\").replace("'", "\\'")
 }
