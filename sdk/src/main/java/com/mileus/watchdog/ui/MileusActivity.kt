@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.Network
@@ -15,10 +16,12 @@ import android.os.Bundle
 import android.view.View
 import android.webkit.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.mileus.sdk.R
 import com.mileus.watchdog.*
 import com.mileus.watchdog.data.Location
 import kotlinx.android.synthetic.main.activity_mileus_watchdog.*
+import java.util.jar.Manifest
 
 abstract class MileusActivity : AppCompatActivity() {
 
@@ -240,6 +243,32 @@ abstract class MileusActivity : AppCompatActivity() {
         }
     }
 
+    @JavascriptInterface
+    fun verifyBackgroundLocationPermission() {
+        var permissionsGranted = ContextCompat.checkSelfPermission(
+            this,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            permissionsGranted = permissionsGranted && ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+        webview?.evaluateJavascript(
+            """
+                window.onVerifyBackgroundLocationPermissionResult({ 
+                    granted: "$permissionsGranted"
+                })
+            """.trimIndent(),
+            null
+        )
+
+        if (!permissionsGranted) {
+            // todo ask for permissions
+        }
+    }
+
     protected fun updateLocationsInJs() {
         origin?.let {
             webview?.evaluateJavascript(
@@ -280,7 +309,8 @@ abstract class MileusActivity : AppCompatActivity() {
                         accuracy: ${it.accuracy}
                     });
                 """.trimIndent(),
-            null)
+                null
+            )
         }
     }
 
