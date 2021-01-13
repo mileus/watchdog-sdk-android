@@ -16,6 +16,11 @@
     protected *;
 }
 
+-keep class com.mileus.watchdog.ui.MileusWatchdogSchedulingActivity {
+    public *;
+    protected *;
+}
+
 -keep class com.mileus.watchdog.UtilsKt {
     public *;
 }
