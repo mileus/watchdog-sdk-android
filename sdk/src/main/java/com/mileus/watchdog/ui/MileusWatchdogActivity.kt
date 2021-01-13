@@ -1,6 +1,7 @@
 package com.mileus.watchdog.ui
 
 import android.content.Intent
+import android.os.Bundle
 import android.webkit.JavascriptInterface
 import com.mileus.sdk.R
 import com.mileus.watchdog.MileusWatchdog
@@ -23,6 +24,11 @@ class MileusWatchdogActivity : MileusActivity() {
 
     private val taxiRideActivityIntent: Intent?
         get() = MileusWatchdog.taxiRideActivityIntent
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        finishIfNotGranted(android.Manifest.permission.ACCESS_FINE_LOCATION)
+        super.onCreate(savedInstanceState)
+    }
 
     @JavascriptInterface
     fun openTaxiRideScreen() = startActivity(taxiRideActivityIntent)

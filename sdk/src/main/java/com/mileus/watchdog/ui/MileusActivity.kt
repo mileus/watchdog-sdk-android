@@ -13,6 +13,7 @@ import android.net.NetworkRequest
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.webkit.*
 import androidx.appcompat.app.AppCompatActivity
@@ -285,10 +286,7 @@ abstract class MileusActivity : AppCompatActivity() {
 
     @JavascriptInterface
     fun verifyBackgroundLocationPermission() {
-        var permissionsGranted = ContextCompat.checkSelfPermission(
-            this,
-            android.Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
+        var permissionsGranted = true
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             permissionsGranted = permissionsGranted && ContextCompat.checkSelfPermission(
                 this,
@@ -392,6 +390,18 @@ abstract class MileusActivity : AppCompatActivity() {
             }
             build().toString()
         }
+
+    protected fun finishIfNotGranted(permission: String) {
+        var permissionsGranted = ContextCompat.checkSelfPermission(
+            this,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (!permissionsGranted) {
+            Log.e(this::class.simpleName, "Missing runtime permissions, cannot start the activity.")
+            finish()
+        }
+    }
 
     private fun Intent.forSearchActivity(searchType: String) = updateExtras {
         currentOrigin = this@MileusActivity.origin
