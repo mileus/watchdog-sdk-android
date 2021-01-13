@@ -39,20 +39,26 @@ class MainActivity : AppCompatActivity() {
         }
 
         main_open_watchdog_activity.setOnClickListener {
-            handleButtonClick { token, origin, destination ->
+            handleButtonClick { token, origin, destination, _ ->
                 MileusWatchdog.startWatchdogActivity(this, token, origin, destination)
             }
         }
 
+        main_open_watchdog_scheduling_activity.setOnClickListener {
+            handleButtonClick { token, _, _, home ->
+                MileusWatchdog.startWatchdogSchedulingActivity(this, token, home)
+            }
+        }
+
         main_open_market_validation_activity.setOnClickListener {
-            handleButtonClick { token, origin, destination ->
+            handleButtonClick { token, origin, destination, _ ->
                 MileusWatchdog.startMarketValidationActivity(this, token, origin, destination)
             }
         }
     }
 
     private fun handleButtonClick(
-        callback: (token: String, origin: Location, destination: Location) -> Unit
+        callback: (token: String, origin: Location, destination: Location, home: Location) -> Unit
     ) {
 
         val token = main_token.text.toString()
@@ -63,19 +69,28 @@ class MainActivity : AppCompatActivity() {
             apply()
         }
 
+        fun String.toCoordinate() = replace(',', '.').toDouble()
+
         try {
             val originLocation = Location(
                 main_origin_address.text.toString(),
-                "",
-                main_origin_latitude.text.toString().replace(',', '.').toDouble(),
-                main_origin_longitude.text.toString().replace(',', '.').toDouble()
+                main_origin_address_2.text.toString(),
+                main_origin_latitude.text.toString().toCoordinate(),
+                main_origin_longitude.text.toString().toCoordinate()
             )
 
             val destinationLocation = Location(
                 main_destination_address.text.toString(),
-                "",
-                main_destination_latitude.text.toString().replace(',', '.').toDouble(),
-                main_destination_longitude.text.toString().replace(',', '.').toDouble()
+                main_destination_address_2.text.toString(),
+                main_destination_latitude.text.toString().toCoordinate(),
+                main_destination_longitude.text.toString().toCoordinate()
+            )
+
+            val homeLocation = Location(
+                main_home_address.text.toString(),
+                main_home_address_2.text.toString(),
+                main_home_latitude.text.toString().toCoordinate(),
+                main_home_longitude.text.toString().toCoordinate()
             )
 
             // this would typically be only called in your Application implementation,
@@ -85,7 +100,8 @@ class MainActivity : AppCompatActivity() {
             callback(
                 token,
                 originLocation,
-                destinationLocation
+                destinationLocation,
+                homeLocation
             )
         } catch (e: NumberFormatException) {
             Toast.makeText(this, R.string.number_format_error, Toast.LENGTH_LONG).show()

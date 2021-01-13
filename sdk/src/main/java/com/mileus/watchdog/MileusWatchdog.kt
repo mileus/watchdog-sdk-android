@@ -101,8 +101,8 @@ object MileusWatchdog {
     fun startMarketValidationActivity(
         context: Context,
         accessToken: String,
-        origin: Location? = null,
-        destination: Location? = null
+        origin: Location,
+        destination: Location
     ) {
         context.startActivity(
             createMarketValidationActivityIntent(context, accessToken, origin, destination)
@@ -112,8 +112,8 @@ object MileusWatchdog {
     fun createMarketValidationActivityIntent(
         context: Context,
         accessToken: String,
-        origin: Location? = null,
-        destination: Location? = null
+        origin: Location,
+        destination: Location
     ) = Intent(context, MileusMarketValidationActivity::class.java).updateExtras {
         token = accessToken
         this.origin = origin

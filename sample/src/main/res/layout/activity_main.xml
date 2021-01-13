@@ -62,10 +62,24 @@
             android:layout_marginEnd="8dp"
             android:hint="Origin address"
             android:text="Prague centre"
-            app:layout_constraintBottom_toTopOf="@id/main_origin_latitude"
+            app:layout_constraintBottom_toTopOf="@id/main_origin_address_2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/main_env" />
+
+        <EditText
+            android:id="@+id/main_origin_address_2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:hint="Origin address line 2"
+            android:text="Prague, Czechia"
+            app:layout_constraintBottom_toTopOf="@id/main_origin_latitude"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/main_origin_address" />
 
         <EditText
             android:id="@+id/main_origin_latitude"
@@ -80,7 +94,7 @@
             app:layout_constraintBottom_toTopOf="@id/main_origin_longitude"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/main_origin_address" />
+            app:layout_constraintTop_toBottomOf="@id/main_origin_address_2" />
 
         <EditText
             android:id="@+id/main_origin_longitude"
@@ -106,10 +120,24 @@
             android:layout_marginEnd="8dp"
             android:hint="Destination address"
             android:text="Not Prague centre"
-            app:layout_constraintBottom_toTopOf="@id/main_destination_latitude"
+            app:layout_constraintBottom_toTopOf="@id/main_destination_address_2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/main_origin_longitude" />
+
+        <EditText
+            android:id="@+id/main_destination_address_2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:hint="Destination address line 2"
+            android:text="Prague, Czechia"
+            app:layout_constraintBottom_toTopOf="@id/main_destination_latitude"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/main_destination_address" />
 
         <EditText
             android:id="@+id/main_destination_latitude"
@@ -124,7 +152,7 @@
             app:layout_constraintBottom_toTopOf="@id/main_destination_longitude"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/main_destination_address" />
+            app:layout_constraintTop_toBottomOf="@id/main_destination_address_2" />
 
         <EditText
             android:id="@+id/main_destination_longitude"
@@ -136,10 +164,68 @@
             android:hint="Destination longitude"
             android:inputType="numberDecimal|numberSigned"
             android:text="14.489431"
-            app:layout_constraintBottom_toTopOf="@id/main_open_market_validation_activity"
+            app:layout_constraintBottom_toTopOf="@id/main_home_address"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/main_destination_latitude" />
+
+        <EditText
+            android:id="@+id/main_home_address"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:hint="Home address"
+            android:text="Not Prague centre"
+            app:layout_constraintBottom_toTopOf="@id/main_home_address_2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/main_destination_longitude" />
+
+        <EditText
+            android:id="@+id/main_home_address_2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:hint="Home address line 2"
+            android:text="Prague, Czechia"
+            app:layout_constraintBottom_toTopOf="@id/main_home_latitude"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/main_home_address" />
+
+        <EditText
+            android:id="@+id/main_home_latitude"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:hint="Home latitude"
+            android:inputType="numberDecimal|numberSigned"
+            android:text="50.121765"
+            app:layout_constraintBottom_toTopOf="@id/main_home_longitude"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/main_home_address_2" />
+
+        <EditText
+            android:id="@+id/main_home_longitude"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:hint="Home longitude"
+            android:inputType="numberDecimal|numberSigned"
+            android:text="14.489431"
+            app:layout_constraintBottom_toTopOf="@id/main_open_watchdog_scheduling_activity"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/main_home_latitude" />
 
         <Button
             android:id="@+id/main_open_market_validation_activity"
@@ -152,6 +238,15 @@
             app:layout_constraintEnd_toStartOf="@id/main_open_watchdog_activity"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/main_open_watchdog_scheduling_activity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="Scheduling"
+            app:layout_constraintBottom_toTopOf="@id/main_open_watchdog_activity"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <Button
             android:id="@+id/main_open_watchdog_activity"
