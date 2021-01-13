@@ -100,19 +100,33 @@ abstract class MileusActivity : AppCompatActivity() {
             putBoolean("infoicon", value)
         }
 
-    @SuppressLint("SetJavaScriptEnabled", "SourceLockedOrientationActivity")
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.MileusTheme)
         setContentView(R.layout.activity_mileus_watchdog)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
+        partnerName = MileusWatchdog.partnerName
+        fetchIntentExtras()
+        restoreState(savedInstanceState)
+
+        initToolbar()
+        initWebView(savedInstanceState)
+
+        mileus_error_retry.setOnClickListener {
+            loadWeb()
+        }
+    }
+
+    private fun fetchIntentExtras() {
         origin = intent.extras?.origin
         destination = intent.extras?.destination
         home = intent.extras?.home
         token = intent.extras?.token ?: throw IllegalStateException("Missing access token.")
-        partnerName = MileusWatchdog.partnerName
+    }
 
+    private fun restoreState(savedInstanceState: Bundle?) {
         savedInstanceState?.let {
             it.origin?.let { origin = it }
             it.destination?.let { destination = it }
@@ -120,7 +134,9 @@ abstract class MileusActivity : AppCompatActivity() {
             it.toolbarText?.let { toolbarText = it }
             isInfoIconVisible = it.isInfoIconVisible
         }
+    }
 
+    private fun initToolbar() {
         mileus_toolbar.setNavigationOnClickListener { finish() }
         mileus_toolbar.title = toolbarText ?: defaultToolbarText
         mileus_toolbar.inflateMenu(R.menu.menu_mileus_watchdog)
@@ -134,10 +150,14 @@ abstract class MileusActivity : AppCompatActivity() {
                 else -> false
             }
         }
+    }
 
+    @SuppressLint("SetJavaScriptEnabled")
+    private fun initWebView(savedInstanceState: Bundle?) {
         val progressBar = mileus_progress
         webview = mileus_webview
         val errorLayout = mileus_error
+
         webview?.apply {
             addJavascriptInterface(this@MileusActivity, "MileusNative")
             settings.javaScriptEnabled = true
@@ -170,10 +190,6 @@ abstract class MileusActivity : AppCompatActivity() {
                     errorLayout.visibility = View.VISIBLE
                 }
             }
-        }
-
-        mileus_error_retry.setOnClickListener {
-            loadWeb()
         }
 
         if (savedInstanceState == null) {
@@ -392,7 +408,7 @@ abstract class MileusActivity : AppCompatActivity() {
         }
 
     protected fun finishIfNotGranted(permission: String) {
-        var permissionsGranted = ContextCompat.checkSelfPermission(
+        val permissionsGranted = ContextCompat.checkSelfPermission(
             this,
             permission
         ) == PackageManager.PERMISSION_GRANTED

@@ -1,6 +1,5 @@
 package com.mileus.watchdog.ui
 
-import android.os.Bundle
 import android.webkit.JavascriptInterface
 import com.mileus.sdk.R
 
