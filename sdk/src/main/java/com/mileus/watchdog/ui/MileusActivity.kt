@@ -73,6 +73,7 @@ abstract class MileusActivity : AppCompatActivity() {
 
     protected abstract val defaultToolbarText: String
     private var toolbarText: String? = null
+    private var isInfoIconVisible = false
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
@@ -92,15 +93,18 @@ abstract class MileusActivity : AppCompatActivity() {
             putString("toolbar", value)
         }
 
+    private var Bundle.isInfoIconVisible: Boolean
+        get() = getBoolean("infoicon", false)
+        set(value) {
+            putBoolean("infoicon", value)
+        }
+
     @SuppressLint("SetJavaScriptEnabled", "SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.MileusTheme)
         setContentView(R.layout.activity_mileus_watchdog)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-
-        mileus_toolbar.setNavigationOnClickListener { finish() }
-        mileus_toolbar.title = toolbarText ?: defaultToolbarText
 
         origin = intent.extras?.origin
         destination = intent.extras?.destination
@@ -113,6 +117,21 @@ abstract class MileusActivity : AppCompatActivity() {
             it.destination?.let { destination = it }
             it.home?.let { home = it }
             it.toolbarText?.let { toolbarText = it }
+            isInfoIconVisible = it.isInfoIconVisible
+        }
+
+        mileus_toolbar.setNavigationOnClickListener { finish() }
+        mileus_toolbar.title = toolbarText ?: defaultToolbarText
+        mileus_toolbar.inflateMenu(R.menu.menu_mileus_watchdog)
+        mileus_toolbar.menu.findItem(R.id.item_mileus_info).isVisible = isInfoIconVisible
+        mileus_toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.item_mileus_info -> {
+                    handleInfoIconClick()
+                    true
+                }
+                else -> false
+            }
         }
 
         val progressBar = mileus_progress
@@ -172,6 +191,7 @@ abstract class MileusActivity : AppCompatActivity() {
             it.destination = destination
             it.home = home
             it.toolbarText = toolbarText
+            it.isInfoIconVisible = isInfoIconVisible
         }
     }
 
@@ -234,6 +254,12 @@ abstract class MileusActivity : AppCompatActivity() {
     fun setToolbarTitle(title: String) {
         toolbarText = title
         mileus_toolbar.title = title
+    }
+
+    @JavascriptInterface
+    fun setInfoIconVisible(visible: Boolean) {
+        mileus_toolbar.menu.findItem(R.id.item_mileus_info).isVisible = visible
+        isInfoIconVisible = visible
     }
 
     @JavascriptInterface
@@ -326,6 +352,10 @@ abstract class MileusActivity : AppCompatActivity() {
                 null
             )
         }
+    }
+
+    private fun handleInfoIconClick() {
+        webview?.evaluateJavascript("window.handleInfoIconClick();", null)
     }
 
     private fun buildUrl() = Uri.parse(baseUrl)

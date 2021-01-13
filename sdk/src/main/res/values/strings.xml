@@ -4,4 +4,6 @@
     <string name="webview_retry">Try again</string>
 
     <string name="market_validation_title">Public transport + Taxi</string>
+
+    <string name="menu_item_info">Info</string>
 </resources>
