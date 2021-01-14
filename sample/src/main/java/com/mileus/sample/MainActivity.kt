@@ -39,26 +39,26 @@ class MainActivity : AppCompatActivity() {
         }
 
         main_open_watchdog_activity.setOnClickListener {
-            handleButtonClick { token, origin, destination, _ ->
-                MileusWatchdog.startWatchdogActivity(this, token, origin, destination)
+            handleButtonClick { origin, destination, _ ->
+                MileusWatchdog.startWatchdogActivity(this, origin, destination)
             }
         }
 
         main_open_watchdog_scheduling_activity.setOnClickListener {
-            handleButtonClick { token, _, _, home ->
-                MileusWatchdog.startWatchdogSchedulingActivity(this, token, home)
+            handleButtonClick { _, _, home ->
+                MileusWatchdog.startWatchdogSchedulingActivity(this, home)
             }
         }
 
         main_open_market_validation_activity.setOnClickListener {
-            handleButtonClick { token, origin, destination, _ ->
-                MileusWatchdog.startMarketValidationActivity(this, token, origin, destination)
+            handleButtonClick { origin, destination, _ ->
+                MileusWatchdog.startMarketValidationActivity(this, origin, destination)
             }
         }
     }
 
     private fun handleButtonClick(
-        callback: (token: String, origin: Location, destination: Location, home: Location) -> Unit
+        callback: (origin: Location, destination: Location, home: Location) -> Unit
     ) {
 
         val token = main_token.text.toString()
@@ -93,12 +93,9 @@ class MainActivity : AppCompatActivity() {
                 main_home_longitude.text.toString().toCoordinate()
             )
 
-            // this would typically be only called in your Application implementation,
-            // we are calling it here because we want to test different "partner names" in this sample app
-            MileusWatchdog.init(partnerName, main_env.selectedItem.toString())
+            MileusWatchdog.init(token, partnerName, main_env.selectedItem.toString())
 
             callback(
-                token,
                 originLocation,
                 destinationLocation,
                 homeLocation

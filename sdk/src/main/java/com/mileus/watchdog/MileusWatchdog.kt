@@ -23,10 +23,16 @@ object MileusWatchdog {
     const val SEARCH_TYPE_DESTINATION = "SEARCH_TYPE_DESTINATION"
     const val SEARCH_TYPE_HOME = "SEARCH_TYPE_HOME"
 
+    lateinit var accessToken: String
+        private set
+
     lateinit var partnerName: String
         private set
 
     lateinit var environment: String
+        private set
+
+    var isInitialized = false
         private set
 
     var originSearchActivityIntent: Intent? = null
@@ -37,8 +43,9 @@ object MileusWatchdog {
 
     var foregroundServiceNotificationInfo: NotificationInfo? = null
 
-    fun init(partnerName: String, environment: String = ENV_PRODUCTION) {
-        MileusWatchdog.partnerName = partnerName
+    fun init(accessToken: String, partnerName: String, environment: String = ENV_PRODUCTION) {
+        this.accessToken = accessToken
+        this.partnerName = partnerName
         if (environment !in arrayOf(
                 ENV_PRODUCTION,
                 ENV_STAGING,
@@ -47,7 +54,8 @@ object MileusWatchdog {
         ) {
             throw IllegalArgumentException("Invalid environment.")
         }
-        MileusWatchdog.environment = environment
+        this.environment = environment
+        isInitialized = true
     }
 
     fun Activity.returnLocationAndFinishActivity(location: Location) {
@@ -61,18 +69,16 @@ object MileusWatchdog {
 
     fun startWatchdogActivity(
         context: Context,
-        accessToken: String,
         origin: Location? = null,
         destination: Location? = null
     ) {
         context.startActivity(
-            createWatchdogActivityIntent(context, accessToken, origin, destination)
+            createWatchdogActivityIntent(context, origin, destination)
         )
     }
 
     fun createWatchdogActivityIntent(
         context: Context,
-        accessToken: String,
         origin: Location? = null,
         destination: Location? = null
     ) = Intent(context, MileusWatchdogActivity::class.java).updateExtras {
@@ -83,15 +89,13 @@ object MileusWatchdog {
 
     fun startWatchdogSchedulingActivity(
         context: Context,
-        accessToken: String,
         home: Location? = null
     ) {
-        context.startActivity(createWatchdogSchedulingActivityIntent(context, accessToken, home))
+        context.startActivity(createWatchdogSchedulingActivityIntent(context, home))
     }
 
     fun createWatchdogSchedulingActivityIntent(
         context: Context,
-        accessToken: String,
         home: Location? = null
     ) = Intent(context, MileusWatchdogSchedulingActivity::class.java).updateExtras {
         token = accessToken
@@ -100,18 +104,16 @@ object MileusWatchdog {
 
     fun startMarketValidationActivity(
         context: Context,
-        accessToken: String,
         origin: Location,
         destination: Location
     ) {
         context.startActivity(
-            createMarketValidationActivityIntent(context, accessToken, origin, destination)
+            createMarketValidationActivityIntent(context, origin, destination)
         )
     }
 
     fun createMarketValidationActivityIntent(
         context: Context,
-        accessToken: String,
         origin: Location,
         destination: Location
     ) = Intent(context, MileusMarketValidationActivity::class.java).updateExtras {
