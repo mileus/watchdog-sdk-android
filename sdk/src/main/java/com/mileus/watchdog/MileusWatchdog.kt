@@ -82,6 +82,7 @@ object MileusWatchdog {
         origin: Location? = null,
         destination: Location? = null
     ) = Intent(context, MileusWatchdogActivity::class.java).updateExtras {
+        assertInitialized()
         token = accessToken
         this.origin = origin
         this.destination = destination
@@ -98,6 +99,7 @@ object MileusWatchdog {
         context: Context,
         home: Location? = null
     ) = Intent(context, MileusWatchdogSchedulingActivity::class.java).updateExtras {
+        assertInitialized()
         token = accessToken
         this.home = home
     }
@@ -117,12 +119,21 @@ object MileusWatchdog {
         origin: Location,
         destination: Location
     ) = Intent(context, MileusMarketValidationActivity::class.java).updateExtras {
+        assertInitialized()
         token = accessToken
         this.origin = origin
         this.destination = destination
     }
 
     fun onSearchStartingSoon() {
-
+        assertInitialized()
     }
+
+    private fun assertInitialized() {
+        if (!isInitialized) {
+            throw SdkUninitializedException()
+        }
+    }
+
+    class SdkUninitializedException : IllegalStateException("Mileus SDK hasn't been initialized.")
 }
