@@ -1,10 +1,15 @@
 package com.mileus.sample
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import com.mileus.watchdog.MileusWatchdog
 import com.mileus.watchdog.data.Location
 import kotlinx.android.synthetic.main.activity_main.*
@@ -16,9 +21,23 @@ class MainActivity : AppCompatActivity() {
         private const val KEY_PARTNER_NAME = "KEY_PARTNER_NAME"
     }
 
+    private lateinit var requestPermission: ActivityResultLauncher<String>
+
+    private var afterGranted: (() -> Unit)? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        requestPermission = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { granted ->
+            if (granted) {
+                afterGranted?.invoke()
+            } else {
+                Toast.makeText(this, R.string.permission_denied, Toast.LENGTH_SHORT).show()
+            }
+        }
 
         getPreferences(Context.MODE_PRIVATE).apply {
             main_token.setText(getString(KEY_TOKEN, ""))
@@ -51,15 +70,29 @@ class MainActivity : AppCompatActivity() {
         }
 
         main_open_market_validation_activity.setOnClickListener {
-            handleButtonClick { origin, destination, _ ->
+            handleButtonClick(false) { origin, destination, _ ->
                 MileusWatchdog.startMarketValidationActivity(this, origin, destination)
             }
         }
     }
 
     private fun handleButtonClick(
+        requireFineLocation: Boolean = true,
         callback: (origin: Location, destination: Location, home: Location) -> Unit
     ) {
+
+        val permissionFine = !requireFineLocation || ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (!permissionFine) {
+            afterGranted = {
+                handleButtonClick(requireFineLocation, callback)
+            }
+            requestPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            return
+        }
 
         val token = main_token.text.toString()
         val partnerName = main_partner_name.text.toString()

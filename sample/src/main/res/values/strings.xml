@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Mileus SDK Sample</string>
     <string name="number_format_error">Please make sure all values have the correct format.</string>
+    <string name="permission_denied">Permission denied.</string>
 </resources>
