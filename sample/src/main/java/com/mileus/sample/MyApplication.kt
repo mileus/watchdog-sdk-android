@@ -16,6 +16,7 @@ class MyApplication : Application() {
         Intent(this, LocationSearchActivity::class.java).also {
             MileusWatchdog.destinationSearchActivityIntent = it
             MileusWatchdog.originSearchActivityIntent = it
+            MileusWatchdog.homeSearchActivityIntent = it
         }
 
         MileusWatchdog.taxiRideActivityIntent = Intent(this, TaxiRideActivity::class.java)
