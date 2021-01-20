@@ -107,6 +107,8 @@ abstract class MileusActivity : AppCompatActivity() {
         setContentView(R.layout.activity_mileus_watchdog)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
+        MileusWatchdog.assertInitialized()
+
         partnerName = MileusWatchdog.partnerName
         fetchIntentExtras()
         restoreState(savedInstanceState)

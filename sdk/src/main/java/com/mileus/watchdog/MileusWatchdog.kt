@@ -129,7 +129,7 @@ object MileusWatchdog {
         assertInitialized()
     }
 
-    private fun assertInitialized() {
+    internal fun assertInitialized() {
         if (!isInitialized) {
             throw SdkUninitializedException()
         }
