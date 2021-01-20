@@ -6,6 +6,10 @@ import android.webkit.JavascriptInterface
 import com.mileus.sdk.R
 import com.mileus.watchdog.MileusWatchdog
 
+/**
+ * The activity for the Mileus Watchdog screen. Use
+ * [com.mileus.watchdog.MileusWatchdog.startWatchdogActivity] to start this activity
+ */
 class MileusWatchdogActivity : MileusActivity() {
 
     companion object {

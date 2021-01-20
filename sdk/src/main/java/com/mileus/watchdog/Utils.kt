@@ -22,6 +22,9 @@ internal var Bundle.origin: Location?
         putParcelable(BundleKeys.ORIGIN, value)
     }
 
+/**
+ * The current origin location. Will be passed to any location search activity.
+ */
 var Bundle.currentOrigin: Location?
     get() = getParcelable(MileusWatchdog.CURRENT_ORIGIN_EXTRA)
     internal set(value) {
@@ -34,6 +37,9 @@ internal var Bundle.destination: Location?
         putParcelable(BundleKeys.DESTINATION, value)
     }
 
+/**
+ * The current destination location. Will be passed to any location search activity.
+ */
 var Bundle.currentDestination: Location?
     get() = getParcelable(MileusWatchdog.CURRENT_DESTINATION_EXTRA)
     internal set(value) {
@@ -46,12 +52,20 @@ internal var Bundle.home: Location?
         putParcelable(BundleKeys.HOME, value)
     }
 
+/**
+ * The current home location. Will be passed to any location search activity.
+ */
 var Bundle.currentHome: Location?
     get() = getParcelable(MileusWatchdog.CURRENT_HOME_EXTRA)
     internal set(value) {
         putParcelable(MileusWatchdog.CURRENT_HOME_EXTRA, value)
     }
 
+/**
+ * The search type, will be passed to any location search activity. Can be
+ * [MileusWatchdog.SEARCH_TYPE_ORIGIN], [MileusWatchdog.SEARCH_TYPE_DESTINATION]
+ * or [MileusWatchdog.SEARCH_TYPE_HOME]
+ */
 var Bundle.searchType: String?
     get() = getString(MileusWatchdog.SEARCH_TYPE)
     set(value) {

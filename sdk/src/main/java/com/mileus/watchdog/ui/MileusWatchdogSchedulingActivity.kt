@@ -4,6 +4,10 @@ import android.os.Bundle
 import android.util.Log
 import com.mileus.watchdog.MileusWatchdog
 
+/**
+ * The activity for the Mileus Watchdog scheduling screen. Use
+ * [com.mileus.watchdog.MileusWatchdog.startWatchdogSchedulingActivity] to start this activity
+ */
 class MileusWatchdogSchedulingActivity : MileusActivity() {
 
     override val mode = "watchdog_scheduling"

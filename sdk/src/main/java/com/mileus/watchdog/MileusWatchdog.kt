@@ -9,6 +9,10 @@ import com.mileus.watchdog.ui.MileusMarketValidationActivity
 import com.mileus.watchdog.ui.MileusWatchdogActivity
 import com.mileus.watchdog.ui.MileusWatchdogSchedulingActivity
 
+/**
+ * Encapsulates all Mileus SDK-related methods and attributes. Make sure to call [init] prior
+ * to calling any methods (but you may set/update properties within this object whenever you want).
+ */
 object MileusWatchdog {
 
     const val ENV_PRODUCTION = "production"
@@ -23,26 +27,76 @@ object MileusWatchdog {
     const val SEARCH_TYPE_DESTINATION = "SEARCH_TYPE_DESTINATION"
     const val SEARCH_TYPE_HOME = "SEARCH_TYPE_HOME"
 
+    /**
+     * The Mileus access token in use. Can be set only using [init].
+     */
     lateinit var accessToken: String
         private set
 
+    /**
+     * The partner name used with the SDK. Can be set only using [init].
+     */
     lateinit var partnerName: String
         private set
 
+    /**
+     * The current environment in use, such as [ENV_PRODUCTION]. Can be set only using [init].
+     */
     lateinit var environment: String
         private set
 
+    /**
+     * True if the SDK has been initialized (implying that most methods within the SDK
+     * are ready for use).
+     */
     var isInitialized = false
         private set
 
+    /**
+     * The intent used for requesting an origin location. Needs to be an activity that will call
+     * [returnLocationAndFinishActivity] after a location is selected. Use [searchType] to find out
+     * which location is being requested if you're reusing the same activity for multiple purposes.
+     * Use [currentOrigin] to obtain the old origin location.
+     */
     var originSearchActivityIntent: Intent? = null
+
+    /**
+     * The intent used for requesting a destination location. Needs to be an activity that will call
+     * [returnLocationAndFinishActivity] after a location is selected. Use [searchType] to find out
+     * which location is being requested if you're reusing the same activity for multiple purposes.
+     * Use [currentDestination] to obtain the old destination location.
+     */
     var destinationSearchActivityIntent: Intent? = null
+
+    /**
+     * The intent used for requesting a home location. Needs to be an activity that will call
+     * [returnLocationAndFinishActivity] after a location is selected. Use [searchType] to find out
+     * which location is being requested if you're reusing the same activity for multiple purposes.
+     * Use [currentHome] to obtain the old home location.
+     */
     var homeSearchActivityIntent: Intent? = null
 
+    /**
+     * The intent used for opening the last screen of the Mileus flow. Must be an activity that
+     * implements that screen.
+     */
     var taxiRideActivityIntent: Intent? = null
 
+    /**
+     * The notification info used to customize the notifications displayed when a foreground service
+     * is running.
+     */
     var foregroundServiceNotificationInfo: NotificationInfo? = null
 
+    /**
+     * Call this method before calling any other method within the SDK (or an exception will
+     * be thrown). You can still set/update properties of this object prior to calling this method.
+     *
+     * @param accessToken a valid Mileus Watchdog token that will be used for communicating
+     *      with the Mileus backend.
+     * @param partnerName unique partner identifier
+     * @param environment the environment used with the Mileus backend, such as [ENV_PRODUCTION]
+     */
     fun init(accessToken: String, partnerName: String, environment: String = ENV_PRODUCTION) {
         this.accessToken = accessToken
         this.partnerName = partnerName
@@ -58,6 +112,12 @@ object MileusWatchdog {
         isInitialized = true
     }
 
+    /**
+     * Call this from a location search activity to return the location to the Mileus flow
+     * and finish the activity.
+     *
+     * @param location the [Location] that will be passed back to Mileus
+     */
     fun Activity.returnLocationAndFinishActivity(location: Location) {
         val returnIntent = Intent().updateExtras {
             this.location = location
@@ -67,6 +127,9 @@ object MileusWatchdog {
         finish()
     }
 
+    /**
+     * Shortcut for starting the activity using [createWatchdogActivityIntent].
+     */
     fun startWatchdogActivity(
         context: Context,
         origin: Location? = null,
@@ -77,6 +140,13 @@ object MileusWatchdog {
         )
     }
 
+    /**
+     * Creates an Intent for the watchdog activity.
+     *
+     * @param context context used for creating the intent
+     * @param origin will be used as the origin location if provided
+     * @param destination will be used as the destination location if provided
+     */
     fun createWatchdogActivityIntent(
         context: Context,
         origin: Location? = null,
@@ -88,6 +158,9 @@ object MileusWatchdog {
         this.destination = destination
     }
 
+    /**
+     * Shortcut for starting the activity using [createWatchdogSchedulingActivityIntent].
+     */
     fun startWatchdogSchedulingActivity(
         context: Context,
         home: Location? = null
@@ -95,6 +168,12 @@ object MileusWatchdog {
         context.startActivity(createWatchdogSchedulingActivityIntent(context, home))
     }
 
+    /**
+     * Creates an Intent for the watchdog scheduling activity.
+     *
+     * @param context context used for creating the intent
+     * @param home will be used as the home location if provided
+     */
     fun createWatchdogSchedulingActivityIntent(
         context: Context,
         home: Location? = null
@@ -104,6 +183,9 @@ object MileusWatchdog {
         this.home = home
     }
 
+    /**
+     * Shortcut for starting the activity using [createMarketValidationActivityIntent].
+     */
     fun startMarketValidationActivity(
         context: Context,
         origin: Location,
@@ -114,6 +196,13 @@ object MileusWatchdog {
         )
     }
 
+    /**
+     * Creates an Intent for the market validation activity.
+     *
+     * @param context context used for creating the intent
+     * @param origin will be used as the origin location
+     * @param destination will be used as the destination location
+     */
     fun createMarketValidationActivityIntent(
         context: Context,
         origin: Location,
@@ -125,6 +214,9 @@ object MileusWatchdog {
         this.destination = destination
     }
 
+    /**
+     * Call this method to initialize location searching for a scheduled watchdog.
+     */
     fun onSearchStartingSoon() {
         assertInitialized()
     }
@@ -135,5 +227,8 @@ object MileusWatchdog {
         }
     }
 
+    /**
+     * Thrown when trying to perform any operation without initializing the SDK first (using [init]).
+     */
     class SdkUninitializedException : IllegalStateException("Mileus SDK hasn't been initialized.")
 }
