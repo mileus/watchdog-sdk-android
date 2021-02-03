@@ -115,7 +115,7 @@ abstract class MileusActivity : AppCompatActivity() {
 
         requestPermission = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
-        ) { }
+        ) { onRequestBackgroundLocationResult(it) }
 
         MileusWatchdog.assertInitialized()
 
@@ -330,11 +330,34 @@ abstract class MileusActivity : AppCompatActivity() {
             """.trimIndent(),
             null
         )
+    }
 
-        if (!permissionsGranted) {
+    @JavascriptInterface
+    fun requestBackgroundLocationPermission() {
+        var permissionsGranted = true
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            permissionsGranted = permissionsGranted && ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+
+        if (permissionsGranted) {
+            webview?.evaluateJavascript(
+                "window.onRequestBackgroundLocationPermissionResult({ granted: \"true\" })",
+                null
+            )
+        } else {
             // at this point we can safely assume the OS version is >= Q
             requestPermission.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
         }
+    }
+
+    private fun onRequestBackgroundLocationResult(result: Boolean) {
+        webview?.evaluateJavascript(
+            "window.onRequestBackgroundLocationPermissionResult({ granted: \"$result\" })",
+            null
+        )
     }
 
     protected fun updateLocationsInJs() {
