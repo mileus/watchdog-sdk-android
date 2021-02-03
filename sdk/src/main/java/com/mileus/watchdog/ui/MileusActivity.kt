@@ -1,5 +1,6 @@
 package com.mileus.watchdog.ui
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
@@ -16,6 +17,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.webkit.*
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.mileus.sdk.R
@@ -88,6 +92,8 @@ abstract class MileusActivity : AppCompatActivity() {
         }
     }
 
+    private lateinit var requestPermission: ActivityResultLauncher<String>
+
     private var Bundle.toolbarText: String?
         get() = getString("toolbar")
         set(value) {
@@ -106,6 +112,10 @@ abstract class MileusActivity : AppCompatActivity() {
         setTheme(R.style.MileusTheme)
         setContentView(R.layout.activity_mileus_watchdog)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
+        requestPermission = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { }
 
         MileusWatchdog.assertInitialized()
 
@@ -322,7 +332,8 @@ abstract class MileusActivity : AppCompatActivity() {
         )
 
         if (!permissionsGranted) {
-            // todo ask for permissions
+            // at this point we can safely assume the OS version is >= Q
+            requestPermission.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
         }
     }
 

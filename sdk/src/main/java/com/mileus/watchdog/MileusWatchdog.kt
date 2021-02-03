@@ -28,19 +28,19 @@ object MileusWatchdog {
     const val SEARCH_TYPE_HOME = "SEARCH_TYPE_HOME"
 
     /**
-     * The Mileus access token in use. Can be set only using [init].
+     * The Mileus access token in use. Can only be set using [init].
      */
     lateinit var accessToken: String
         private set
 
     /**
-     * The partner name used with the SDK. Can be set only using [init].
+     * The partner name used with the SDK. Can only be set using [init].
      */
     lateinit var partnerName: String
         private set
 
     /**
-     * The current environment in use, such as [ENV_PRODUCTION]. Can be set only using [init].
+     * The current environment in use, such as [ENV_PRODUCTION]. Can only be set using [init].
      */
     lateinit var environment: String
         private set
