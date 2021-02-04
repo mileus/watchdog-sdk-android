@@ -14,10 +14,10 @@ import android.net.NetworkRequest
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.webkit.*
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -33,6 +33,15 @@ abstract class MileusActivity : AppCompatActivity() {
         const val URL_DEVELOPMENT = "https://mileus.spacek.now.sh/"
         const val URL_STAGING = "https://watchdog-web-stage.mileus.com/"
         const val URL_PRODUCTION = "https://watchdog-web.mileus.com/"
+
+        const val REQUEST_CODE_ORIGIN_SEARCH = 2501
+        const val REQUEST_CODE_DESTINATION_SEARCH = 2502
+        const val REQUEST_CODE_HOME_SEARCH = 2503
+        const val SEARCH_TYPE_ORIGIN = "origin"
+        const val SEARCH_TYPE_DESTINATION = "destination"
+        const val SEARCH_TYPE_HOME = "home"
+
+        private const val REQUEST_CODE_SETTINGS_BG_LOCATION = 2504
     }
 
     protected var origin: Location? = null
@@ -251,19 +260,21 @@ abstract class MileusActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_CODE_SETTINGS_BG_LOCATION) {
+            onRequestBackgroundLocationSettingsResult()
+        } else if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
-                MileusWatchdogActivity.REQUEST_CODE_ORIGIN_SEARCH -> {
+                REQUEST_CODE_ORIGIN_SEARCH -> {
                     origin = data?.extras?.location
                     updateLocationsInJs()
                     return
                 }
-                MileusWatchdogActivity.REQUEST_CODE_DESTINATION_SEARCH -> {
+                REQUEST_CODE_DESTINATION_SEARCH -> {
                     destination = data?.extras?.location
                     updateLocationsInJs()
                     return
                 }
-                MileusWatchdogActivity.REQUEST_CODE_HOME_SEARCH -> {
+                REQUEST_CODE_HOME_SEARCH -> {
                     home = data?.extras?.location
                     updateLocationsInJs()
                     return
@@ -295,20 +306,20 @@ abstract class MileusActivity : AppCompatActivity() {
     @JavascriptInterface
     fun openSearchScreen(searchType: String) {
         when (searchType) {
-            MileusWatchdogActivity.SEARCH_TYPE_ORIGIN ->
+            SEARCH_TYPE_ORIGIN ->
                 startActivityForResult(
                     originSearchIntent,
-                    MileusWatchdogActivity.REQUEST_CODE_ORIGIN_SEARCH
+                    REQUEST_CODE_ORIGIN_SEARCH
                 )
-            MileusWatchdogActivity.SEARCH_TYPE_DESTINATION ->
+            SEARCH_TYPE_DESTINATION ->
                 startActivityForResult(
                     destinationSearchIntent,
-                    MileusWatchdogActivity.REQUEST_CODE_DESTINATION_SEARCH
+                    REQUEST_CODE_DESTINATION_SEARCH
                 )
-            MileusWatchdogActivity.SEARCH_TYPE_HOME ->
+            SEARCH_TYPE_HOME ->
                 startActivityForResult(
                     homeSearchIntent,
-                    MileusWatchdogActivity.REQUEST_CODE_HOME_SEARCH
+                    REQUEST_CODE_HOME_SEARCH
                 )
         }
     }
@@ -354,8 +365,41 @@ abstract class MileusActivity : AppCompatActivity() {
     }
 
     private fun onRequestBackgroundLocationResult(result: Boolean) {
+        var shouldShowRationale = true
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            shouldShowRationale = shouldShowRationale &&
+                    shouldShowRequestPermissionRationale(
+                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                    )
+        }
+        if (!result && !shouldShowRationale) {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", packageName, null)
+            }
+            startActivityForResult(intent, REQUEST_CODE_SETTINGS_BG_LOCATION)
+        } else {
+            webview?.evaluateJavascript(
+                "window.onRequestBackgroundLocationPermissionResult({ granted: \"$result\" })",
+                null
+            )
+        }
+    }
+
+    private fun onRequestBackgroundLocationSettingsResult() {
+        var permissionsGranted = true
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            permissionsGranted = permissionsGranted && ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+
         webview?.evaluateJavascript(
-            "window.onRequestBackgroundLocationPermissionResult({ granted: \"$result\" })",
+            """
+                window.onRequestBackgroundLocationPermissionResult({ 
+                    granted: "$permissionsGranted" 
+                })
+            """.trimIndent(),
             null
         )
     }
