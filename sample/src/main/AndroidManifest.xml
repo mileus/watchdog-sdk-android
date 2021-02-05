@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.mileus.sample">
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name=".MyApplication"
@@ -34,12 +33,6 @@
             android:name=".TaxiRideActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-
-        <activity android:name="com.mileus.watchdog.ui.MileusWatchdogActivity" />
-
-        <activity android:name="com.mileus.watchdog.ui.MileusMarketValidationActivity" />
-
-        <activity android:name="com.mileus.watchdog.ui.MileusWatchdogSchedulingActivity" />
 
     </application>
 
