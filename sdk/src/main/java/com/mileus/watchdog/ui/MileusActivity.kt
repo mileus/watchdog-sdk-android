@@ -364,6 +364,11 @@ abstract class MileusActivity : AppCompatActivity() {
         }
     }
 
+    @JavascriptInterface
+    fun startLocationScanning() {
+        MileusWatchdog.onSearchStartingSoon(this)
+    }
+
     private fun onRequestBackgroundLocationResult(result: Boolean) {
         var shouldShowRationale = true
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

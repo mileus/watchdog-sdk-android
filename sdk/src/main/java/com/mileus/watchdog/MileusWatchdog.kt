@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import com.mileus.watchdog.data.Location
 import com.mileus.watchdog.data.NotificationInfo
+import com.mileus.watchdog.service.LocationUpdatesService
 import com.mileus.watchdog.ui.MileusMarketValidationActivity
 import com.mileus.watchdog.ui.MileusWatchdogActivity
 import com.mileus.watchdog.ui.MileusWatchdogSchedulingActivity
@@ -217,8 +218,15 @@ object MileusWatchdog {
     /**
      * Call this method to initialize location searching for a scheduled watchdog.
      */
-    fun onSearchStartingSoon() {
+    fun onSearchStartingSoon(context: Context) {
         assertInitialized()
+
+        val intent = Intent(context, LocationUpdatesService::class.java)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            context.startForegroundService(intent)
+        } else {
+            context.startService(intent)
+        }
     }
 
     internal fun assertInitialized() {

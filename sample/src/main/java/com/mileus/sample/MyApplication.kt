@@ -29,7 +29,7 @@ class MyApplication : Application() {
             val channel = NotificationChannel(
                 channelId,
                 getString(R.string.notification_channel_name),
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_LOW
             )
             notificationManager.createNotificationChannel(channel)
         }

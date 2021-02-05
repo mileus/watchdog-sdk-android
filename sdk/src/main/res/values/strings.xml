@@ -6,4 +6,7 @@
     <string name="market_validation_title">Public transport + Taxi</string>
 
     <string name="menu_item_info">Info</string>
+
+    <string name="notification_service_location_title">Requesting location…</string>
+    <string name="notification_service_location_text">Your scheduled watchdog is about to start.</string>
 </resources>
