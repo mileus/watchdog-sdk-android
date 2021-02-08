@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="mileusToolbarSurface" format="color" />
+    <attr name="mileusOnSurface" format="color" />
+    <attr name="mileusTitleFont" format="string" />
+    <attr name="mileusLightStatusBar" format="boolean" />
+
+</resources>

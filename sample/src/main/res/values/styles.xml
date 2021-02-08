@@ -6,5 +6,12 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:statusBarColor">@android:color/black</item>
     </style>
-
+<!--
+    <style name="MileusTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="mileusToolbarSurface">#0000ff</item>
+        <item name="mileusOnSurface">#ffffff</item>
+        <item name="mileusLightStatusBar">false</item>
+        <item name="mileusTitleFont">monospace</item>
+    </style>
+-->
 </resources>

@@ -1,5 +1,22 @@
 <resources>
+
     <style name="MileusTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:statusBarColor">@android:color/black</item>
+        <item name="mileusToolbarSurface">@color/colorToolbar</item>
+        <item name="mileusOnSurface">@android:color/black</item>
+        <item name="mileusLightStatusBar">true</item>
+        <item name="mileusTitleFont">sans-serif</item>
     </style>
+
+    <style name="MileusTheme.Intermediate" />
+
+    <style name="MileusTheme.Final" parent="MileusTheme.Intermediate">
+        <item name="android:colorPrimary">@android:color/black</item>
+        <item name="colorPrimary">@android:color/black</item>
+        <item name="android:statusBarColor">?mileusToolbarSurface</item>
+    </style>
+
+    <style name="MileusTitleAppearance" parent="TextAppearance.AppCompat.Title">
+        <item name="fontFamily">?attr/mileusTitleFont</item>
+    </style>
+
 </resources>

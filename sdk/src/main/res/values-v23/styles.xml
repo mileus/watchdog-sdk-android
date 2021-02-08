@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="MileusTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/colorToolbar</item>
-        <item name="android:windowLightStatusBar">true</item>
+    <style name="MileusTheme.Intermediate">
+        <item name="android:windowLightStatusBar">?mileusLightStatusBar</item>
     </style>
 </resources>

@@ -6,14 +6,16 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:theme="@style/MileusTheme">
+    tools:theme="@style/MileusTheme.Final">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/mileus_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
-        android:background="@color/colorToolbar"
-        app:navigationIcon="@drawable/ic_close" />
+        android:background="?mileusToolbarSurface"
+        app:navigationIcon="@drawable/ic_close"
+        app:titleTextAppearance="@style/MileusTitleAppearance"
+        app:titleTextColor="?mileusOnSurface" />
 
     <FrameLayout
         android:layout_width="match_parent"

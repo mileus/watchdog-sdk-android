@@ -110,7 +110,7 @@ abstract class MileusActivity : AppCompatActivity() {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTheme(R.style.MileusTheme)
+        setTheme(R.style.MileusTheme_Final)
         setContentView(R.layout.activity_mileus_watchdog)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
@@ -146,6 +146,11 @@ abstract class MileusActivity : AppCompatActivity() {
     }
 
     private fun initToolbar() {
+        val array = theme.obtainStyledAttributes(intArrayOf(R.attr.mileusOnSurface))
+        val tint = array.getColor(0, 0)
+        array.recycle()
+
+        mileus_toolbar.navigationIcon?.setTint(tint)
         mileus_toolbar.setNavigationOnClickListener { finish() }
         mileus_toolbar.title = toolbarText ?: defaultToolbarText
         mileus_toolbar.inflateMenu(R.menu.menu_mileus_watchdog)
