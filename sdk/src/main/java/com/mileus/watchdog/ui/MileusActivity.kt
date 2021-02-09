@@ -154,7 +154,10 @@ abstract class MileusActivity : AppCompatActivity() {
         mileus_toolbar.setNavigationOnClickListener { finish() }
         mileus_toolbar.title = toolbarText ?: defaultToolbarText
         mileus_toolbar.inflateMenu(R.menu.menu_mileus_watchdog)
-        mileus_toolbar.menu.findItem(R.id.item_mileus_info).isVisible = isInfoIconVisible
+        mileus_toolbar.menu.findItem(R.id.item_mileus_info).apply {
+            isVisible = isInfoIconVisible
+            icon.setTint(tint)
+        }
         mileus_toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.item_mileus_info -> {
