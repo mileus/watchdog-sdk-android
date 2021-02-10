@@ -3,4 +3,5 @@
     <string name="number_format_error">Please make sure all values have the correct format.</string>
     <string name="permission_denied">Permission denied.</string>
     <string name="notification_channel_name">Foreground service</string>
+    <string name="location_sync_scheduled">Location sync scheduled in about 20 seconds. Feel free to close the app now.</string>
 </resources>

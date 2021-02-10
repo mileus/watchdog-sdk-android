@@ -310,6 +310,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toTopOf="@id/main_open_watchdog_activity"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -329,7 +330,6 @@
             android:id="@+id/main_open_watchdog_activity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:text="Watchdog"
@@ -339,21 +339,36 @@
             android:id="@+id/main_open_market_validation_activity"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
             android:text="Market validation"
-            app:layout_constraintStart_toEndOf="@id/main_open_watchdog_scheduling_activity"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintBottom_toTopOf="@id/main_sync_location"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/main_open_watchdog_scheduling_activity" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/main_open_watchdog_scheduling_activity"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="4dp"
             android:text="Scheduling"
-            app:layout_constraintTop_toTopOf="@id/main_open_market_validation_activity"
             app:layout_constraintBottom_toBottomOf="@id/main_open_market_validation_activity"
             app:layout_constraintEnd_toStartOf="@id/main_open_market_validation_activity"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/main_open_market_validation_activity" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/main_sync_location"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="Start location sync"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

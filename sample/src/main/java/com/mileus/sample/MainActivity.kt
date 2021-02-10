@@ -10,15 +10,20 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.mileus.watchdog.MileusWatchdog
 import com.mileus.watchdog.data.Location
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        private const val KEY_TOKEN = "KEY_TOKEN"
-        private const val KEY_PARTNER_NAME = "KEY_PARTNER_NAME"
+        const val KEY_TOKEN = "KEY_TOKEN"
+        const val KEY_PARTNER_NAME = "KEY_PARTNER_NAME"
+        const val KEY_ENV = "KEY_ENV"
     }
 
     private lateinit var requestPermission: ActivityResultLauncher<String>
@@ -39,11 +44,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        getPreferences(Context.MODE_PRIVATE).apply {
-            main_token.setText(getString(KEY_TOKEN, ""))
-            main_partner_name.setText(getString(KEY_PARTNER_NAME, "demo"))
-        }
-
         main_env.apply {
             adapter = ArrayAdapter(
                 context,
@@ -54,7 +54,18 @@ class MainActivity : AppCompatActivity() {
                     MileusWatchdog.ENV_PRODUCTION
                 )
             )
-            setSelection(1)
+        }
+
+        getPreferences(Context.MODE_PRIVATE).apply {
+            main_token.setText(getString(KEY_TOKEN, ""))
+            main_partner_name.setText(getString(KEY_PARTNER_NAME, "demo"))
+            main_env.setSelection(
+                (main_env.adapter as ArrayAdapter<String>).getPosition(
+                    getString(
+                        KEY_ENV, MileusWatchdog.ENV_STAGING
+                    )
+                )
+            )
         }
 
         main_open_watchdog_activity.setOnClickListener {
@@ -74,6 +85,8 @@ class MainActivity : AppCompatActivity() {
                 MileusWatchdog.startMarketValidationActivity(this, origin, destination)
             }
         }
+
+        main_sync_location.setOnClickListener { onScheduleLocationSyncClick() }
     }
 
     private fun handleButtonClick(
@@ -92,14 +105,6 @@ class MainActivity : AppCompatActivity() {
             }
             requestPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
             return
-        }
-
-        val token = main_token.text.toString()
-        val partnerName = main_partner_name.text.toString()
-        getPreferences(Context.MODE_PRIVATE).edit().apply {
-            putString(KEY_TOKEN, token)
-            putString(KEY_PARTNER_NAME, partnerName)
-            apply()
         }
 
         fun String.toCoordinate() = replace(',', '.').toDouble()
@@ -126,7 +131,7 @@ class MainActivity : AppCompatActivity() {
                 main_home_longitude.text.toString().toCoordinate()
             )
 
-            MileusWatchdog.init(token, partnerName, main_env.selectedItem.toString())
+            initSdkFromInputs()
 
             callback(
                 originLocation,
@@ -136,5 +141,35 @@ class MainActivity : AppCompatActivity() {
         } catch (e: NumberFormatException) {
             Toast.makeText(this, R.string.number_format_error, Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun initSdkFromInputs() {
+        val token = main_token.text.toString()
+        val partnerName = main_partner_name.text.toString()
+        val env = main_env.selectedItem.toString()
+        getPreferences(Context.MODE_PRIVATE).edit().apply {
+            putString(KEY_TOKEN, token)
+            putString(KEY_PARTNER_NAME, partnerName)
+            putString(KEY_ENV, env)
+            apply()
+        }
+
+        MileusWatchdog.init(token, partnerName, env)
+    }
+
+    private fun onScheduleLocationSyncClick() {
+        initSdkFromInputs()
+
+        val request = OneTimeWorkRequestBuilder<StartLocationSyncWorker>()
+            .setInitialDelay(20, TimeUnit.SECONDS)
+            .build()
+
+        WorkManager.getInstance(this).enqueueUniqueWork(
+            StartLocationSyncWorker.WORK_NAME,
+            ExistingWorkPolicy.KEEP,
+            request
+        )
+
+        Toast.makeText(this, R.string.location_sync_scheduled, Toast.LENGTH_LONG).show()
     }
 }
