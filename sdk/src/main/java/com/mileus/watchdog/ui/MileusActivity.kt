@@ -151,7 +151,7 @@ abstract class MileusActivity : AppCompatActivity() {
         array.recycle()
 
         mileus_toolbar.navigationIcon?.setTint(tint)
-        mileus_toolbar.setNavigationOnClickListener { finish() }
+        mileus_toolbar.setNavigationOnClickListener { onNavigateBack() }
         mileus_toolbar.title = toolbarText ?: defaultToolbarText
         mileus_toolbar.inflateMenu(R.menu.menu_mileus_watchdog)
         mileus_toolbar.menu.findItem(R.id.item_mileus_info).apply {
@@ -248,11 +248,7 @@ abstract class MileusActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        webview?.evaluateJavascript("window.handleBackEvent()") {
-            if (it != "true") {
-                finish()
-            }
-        }
+        onNavigateBack()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -406,6 +402,14 @@ abstract class MileusActivity : AppCompatActivity() {
             }
             build().toString()
         }
+
+    private fun onNavigateBack() {
+        webview?.evaluateJavascript("window.handleBackEvent()") {
+            if (it != "true") {
+                finish()
+            }
+        }
+    }
 
     protected fun finishIfNotGranted(permission: String) {
         val permissionsGranted = ContextCompat.checkSelfPermission(

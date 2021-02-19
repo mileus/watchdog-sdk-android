@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:background="?mileusToolbarSurface"
-        app:navigationIcon="@drawable/ic_close"
+        app:navigationIcon="@drawable/ic_back"
         app:titleTextAppearance="@style/MileusTitleAppearance"
         app:titleTextColor="?mileusOnSurface" />
 
