@@ -179,6 +179,8 @@ abstract class MileusActivity : AppCompatActivity() {
             addJavascriptInterface(this@MileusActivity, "MileusNative")
             settings.javaScriptEnabled = true
             settings.cacheMode = WebSettings.LOAD_NO_CACHE
+            settings.domStorageEnabled = true
+
             webViewClient = object : WebViewClient() {
                 override fun shouldOverrideUrlLoading(
                     view: WebView?,
