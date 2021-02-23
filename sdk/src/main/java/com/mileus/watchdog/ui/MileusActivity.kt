@@ -26,7 +26,7 @@ import kotlinx.android.synthetic.main.activity_mileus_watchdog.*
 abstract class MileusActivity : AppCompatActivity() {
 
     companion object {
-        const val URL_DEVELOPMENT = "https://mileus.spacek.now.sh/"
+        const val URL_DEVELOPMENT = "https://mileus-spacek.vercel.app/"
         const val URL_STAGING = "https://watchdog-web-stage.mileus.com/"
         const val URL_PRODUCTION = "https://watchdog-web.mileus.com/"
 
