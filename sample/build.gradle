@@ -22,6 +22,7 @@ android {
         }
         dev {
             applicationIdSuffix '.dev'
+            matchingFallbacks ['release']
         }
         release {
             minifyEnabled true
