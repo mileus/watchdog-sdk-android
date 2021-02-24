@@ -286,13 +286,17 @@ abstract class MileusActivity : AppCompatActivity() {
     @JavascriptInterface
     fun setToolbarTitle(title: String) {
         toolbarText = title
-        mileus_toolbar.title = title
+        runOnUiThread {
+            mileus_toolbar.title = title
+        }
     }
 
     @JavascriptInterface
     fun setInfoIconVisible(visible: Boolean) {
-        mileus_toolbar.menu.findItem(R.id.item_mileus_info).isVisible = visible
         isInfoIconVisible = visible
+        runOnUiThread {
+            mileus_toolbar.menu.findItem(R.id.item_mileus_info).isVisible = visible
+        }
     }
 
     @JavascriptInterface
