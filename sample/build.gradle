@@ -18,11 +18,7 @@ android {
 
     buildTypes {
         debug {
-            applicationIdSuffix '.debug'
-        }
-        dev {
             applicationIdSuffix '.dev'
-            matchingFallbacks ['release']
         }
         release {
             minifyEnabled true
