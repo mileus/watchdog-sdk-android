@@ -32,7 +32,7 @@ class MileusWatchdogSchedulingActivity : MileusActivity() {
     private lateinit var requestPermission: ActivityResultLauncher<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        finishIfNotGranted(Manifest.permission.ACCESS_FINE_LOCATION)
+        throwIfNotGranted(Manifest.permission.ACCESS_FINE_LOCATION)
 
         requestPermission = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -41,8 +41,7 @@ class MileusWatchdogSchedulingActivity : MileusActivity() {
         if (MileusWatchdog.foregroundServiceNotificationInfo == null) {
             val msg =
                 "Cannot start activity, foreground service notification info has not been set up."
-            Log.e(this::class.simpleName, msg)
-            finish()
+            throw IllegalStateException(msg)
         }
 
         super.onCreate(savedInstanceState)

@@ -417,15 +417,14 @@ abstract class MileusActivity : AppCompatActivity() {
         }
     }
 
-    protected fun finishIfNotGranted(permission: String) {
+    protected fun throwIfNotGranted(permission: String) {
         val permissionsGranted = ContextCompat.checkSelfPermission(
             this,
             permission
         ) == PackageManager.PERMISSION_GRANTED
 
         if (!permissionsGranted) {
-            Log.e(this::class.simpleName, "Missing runtime permissions, cannot start the activity.")
-            finish()
+            throw IllegalStateException("Missing runtime permissions, cannot start the activity.")
         }
     }
 

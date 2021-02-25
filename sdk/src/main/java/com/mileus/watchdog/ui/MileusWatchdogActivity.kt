@@ -21,7 +21,7 @@ class MileusWatchdogActivity : MileusActivity() {
         get() = MileusWatchdog.taxiRideActivityIntent
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        finishIfNotGranted(android.Manifest.permission.ACCESS_FINE_LOCATION)
+        throwIfNotGranted(android.Manifest.permission.ACCESS_FINE_LOCATION)
         super.onCreate(savedInstanceState)
     }
 
