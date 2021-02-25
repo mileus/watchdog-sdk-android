@@ -39,7 +39,7 @@ ext {
 android.applicationVariants.all { variant ->
     def versionTag
     if (variant.buildType.name == 'debug') {
-        versionTag = getVersionTag('alpha')
+        versionTag = getVersionTag('dev')
     } else {
         versionTag = getVersionTag(variant.buildType.name)
     }
