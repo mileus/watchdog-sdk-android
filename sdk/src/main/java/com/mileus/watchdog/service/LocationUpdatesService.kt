@@ -1,5 +1,6 @@
 package com.mileus.watchdog.service
 
+import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
 import android.location.Location
@@ -12,10 +13,18 @@ import com.mileus.sdk.R
 import com.mileus.watchdog.MileusWatchdog
 import com.mileus.watchdog.await
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.channels.receiveOrNull
+import kotlinx.coroutines.flow.cancel
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
+import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resumeWithException
 
 class LocationUpdatesService : Service() {
@@ -23,8 +32,9 @@ class LocationUpdatesService : Service() {
     companion object {
         private const val NOTIFICATION_ID = 5436
         private const val INTERVAL_MS = 30000L
+        private const val TIMEOUT_MS = 120000L
 
-        private const val URL_DEVELOPMENT = "https://mileus.spacek.now.sh/"
+        private const val URL_DEVELOPMENT = "https://mileus-spacek.vercel.app/"
         private const val URL_STAGING = "https://api-stage.mileus.com/"
         private const val URL_PRODUCTION = "https://api.mileus.com/"
 
@@ -33,12 +43,11 @@ class LocationUpdatesService : Service() {
         private const val RESPONSE_CODE_PROCEED = 202
     }
 
-    private val supervisorJob = SupervisorJob()
-    private val scope = CoroutineScope(Dispatchers.IO + supervisorJob)
+    private val job = Job()
+    private val scope = CoroutineScope(Dispatchers.IO + job)
 
     private lateinit var okHttpClient: OkHttpClient
     private lateinit var locationClient: FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
 
     private val baseUrl: String
         get() = when (MileusWatchdog.environment) {
@@ -52,25 +61,15 @@ class LocationUpdatesService : Service() {
 
         okHttpClient = OkHttpClient()
         locationClient = LocationServices.getFusedLocationProviderClient(this)
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(result: LocationResult?) {
-                super.onLocationResult(result)
-                result ?: return
-
-                onLocationUpdate(result.lastLocation)
-            }
-        }
     }
 
+    @ExperimentalCoroutinesApi
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
         MileusWatchdog.assertInitialized()
 
         val notificationInfo = MileusWatchdog.foregroundServiceNotificationInfo
-        if (notificationInfo == null) {
-            stopSelf()
-            return START_NOT_STICKY
-        }
+            ?: throw IllegalStateException("Foreground notification info not set.")
 
         val notification = NotificationCompat.Builder(this, notificationInfo.channelId)
             .setContentTitle(getString(R.string.notification_service_location_title))
@@ -92,21 +91,28 @@ class LocationUpdatesService : Service() {
         scope.cancel()
     }
 
+    @ExperimentalCoroutinesApi
+    @SuppressLint("MissingPermission")
     private fun startLocationRequest() {
-        val request = LocationRequest.create().apply {
-            interval = INTERVAL_MS
-            priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
-        }
+        scope.launch {
+            try {
+                val updates = locationUpdates()
+                while (isActive) {
+                    val location = withTimeout(TIMEOUT_MS) {
+                        updates.receive()
+                    }
 
-        try {
-            locationClient.requestLocationUpdates(request, locationCallback, Looper.getMainLooper())
-        } catch (_: SecurityException) {
+                    onLocationUpdate(location)
+                }
+            } catch (_: CancellationException) {
+            } finally {
+                stopSelf()
+            }
         }
     }
 
-    private fun onLocationUpdate(location: Location) {
-        scope.launch {
-            val json = """
+    private suspend fun onLocationUpdate(location: Location) = withContext(Dispatchers.IO) {
+        val json = """
                 {
                     "location": {
                         "coordinates": {
@@ -118,32 +124,57 @@ class LocationUpdatesService : Service() {
                 }
             """.trimIndent()
 
-            val url = baseUrl.toUri()
-                .buildUpon()
-                .appendEncodedPath(POST_LOCATION_PATH)
-                .build()
-                .toString()
+        val url = baseUrl.toUri()
+            .buildUpon()
+            .appendEncodedPath(POST_LOCATION_PATH)
+            .build()
+            .toString()
 
-            val request = Request.Builder()
-                .url(url)
-                .post(json.toRequestBody(MEDIA_TYPE_JSON))
-                .addHeader("Authorization", "Bearer ${MileusWatchdog.accessToken}")
-                .build()
+        val request = Request.Builder()
+            .url(url)
+            .post(json.toRequestBody(MEDIA_TYPE_JSON))
+            .addHeader("Authorization", "Bearer ${MileusWatchdog.accessToken}")
+            .build()
 
-            try {
-                okHttpClient.newCall(request).await().let {
-                    if (it.code != RESPONSE_CODE_PROCEED) {
-                        stop()
-                    }
+        try {
+            okHttpClient.newCall(request).await().let {
+                if (it.code != RESPONSE_CODE_PROCEED) {
+                    cancel()
                 }
-            } catch (e: IOException) {
-                stop()
             }
+        } catch (e: IOException) {
+            cancel()
         }
     }
 
-    private fun stop() {
-        locationClient.removeLocationUpdates(locationCallback)
-        stopSelf()
+    @ExperimentalCoroutinesApi
+    @SuppressLint("MissingPermission")
+    private fun CoroutineScope.locationUpdates() = produce<Location> {
+        val request = LocationRequest.create().apply {
+            interval = INTERVAL_MS
+            priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+        }
+
+        val callback = object : LocationCallback() {
+            override fun onLocationResult(result: LocationResult?) {
+                result?.lastLocation?.let(::offer)
+            }
+        }
+
+        try {
+            locationClient.requestLocationUpdates(
+                request,
+                callback,
+                Looper.getMainLooper()
+            ).addOnFailureListener {
+                close()
+            }
+        } catch (e: SecurityException) {
+            close()
+        }
+
+        awaitClose {
+            locationClient.removeLocationUpdates(callback)
+        }
     }
 }
