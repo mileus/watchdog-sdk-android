@@ -34,7 +34,7 @@ class LocationUpdatesService : Service() {
         private const val INTERVAL_MS = 30000L
         private const val TIMEOUT_MS = 120000L
 
-        private const val URL_DEVELOPMENT = "https://mileus.spacek.now.sh/"
+        private const val URL_DEVELOPMENT = "https://mileus-spacek.vercel.app/"
         private const val URL_STAGING = "https://api-stage.mileus.com/"
         private const val URL_PRODUCTION = "https://api.mileus.com/"
 
@@ -43,8 +43,8 @@ class LocationUpdatesService : Service() {
         private const val RESPONSE_CODE_PROCEED = 202
     }
 
-    private val supervisorJob = SupervisorJob()
-    private val scope = CoroutineScope(Dispatchers.IO + supervisorJob)
+    private val job = Job()
+    private val scope = CoroutineScope(Dispatchers.IO + job)
 
     private lateinit var okHttpClient: OkHttpClient
     private lateinit var locationClient: FusedLocationProviderClient
@@ -95,7 +95,7 @@ class LocationUpdatesService : Service() {
     @SuppressLint("MissingPermission")
     private fun startLocationRequest() {
         scope.launch {
-            runCatching {
+            try {
                 val updates = locationUpdates()
                 while (isActive) {
                     val location = withTimeout(TIMEOUT_MS) {
@@ -104,9 +104,10 @@ class LocationUpdatesService : Service() {
 
                     onLocationUpdate(location)
                 }
+            } catch (_: CancellationException) {
+            } finally {
+                stopSelf()
             }
-
-            stopSelf()
         }
     }
 
