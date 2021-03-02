@@ -10,9 +10,19 @@ import kotlinx.android.parcel.Parcelize
  */
 @Parcelize
 data class Location(
-    val addressLine1: String,
-    val addressLine2: String?,
+    val address: Address,
     val latitude: Double,
     val longitude: Double,
     val accuracy: Float = 0f
+) : Parcelable
+
+/**
+ * A Mileus SDK representation of a postal address.
+ * Preferably the first line should contain the building number and street name, and the second line
+ * should contain anything you write below the street name.
+ */
+@Parcelize
+data class Address(
+    val firstLine: String,
+    val secondLine: String?
 ) : Parcelable

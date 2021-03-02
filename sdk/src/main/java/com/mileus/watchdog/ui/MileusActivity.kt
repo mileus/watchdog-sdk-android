@@ -13,7 +13,6 @@ import android.net.NetworkRequest
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.webkit.*
 import androidx.appcompat.app.AppCompatActivity
@@ -332,8 +331,8 @@ abstract class MileusActivity : AppCompatActivity() {
                     window.setOrigin({
                         lat: ${it.latitude},
                         lon: ${it.longitude},
-                        address_line_1: '${it.addressLine1.sanitize()}',
-                        address_line_2: '${it.addressLine2?.sanitize() ?: ""}',
+                        address_line_1: '${it.address.firstLine.sanitize()}',
+                        address_line_2: '${it.address.secondLine?.sanitize() ?: ""}',
                         accuracy: ${it.accuracy}
                     });
                 """.trimIndent(),
@@ -346,8 +345,8 @@ abstract class MileusActivity : AppCompatActivity() {
                     window.setDestination({
                         lat: ${it.latitude},
                         lon: ${it.longitude},
-                        address_line_1: '${it.addressLine1.sanitize()}',
-                        address_line_2: '${it.addressLine2?.sanitize() ?: ""}',
+                        address_line_1: '${it.address.firstLine.sanitize()}',
+                        address_line_2: '${it.address.secondLine?.sanitize() ?: ""}',
                         accuracy: ${it.accuracy}
                     });
                 """.trimIndent(),
@@ -360,8 +359,8 @@ abstract class MileusActivity : AppCompatActivity() {
                     window.setHome({
                         lat: ${it.latitude},
                         lon: ${it.longitude},
-                        address_line_1: '${it.addressLine1.sanitize()}',
-                        address_line_2: '${it.addressLine2?.sanitize() ?: ""}',
+                        address_line_1: '${it.address.firstLine.sanitize()}',
+                        address_line_2: '${it.address.secondLine?.sanitize() ?: ""}',
                         accuracy: ${it.accuracy}
                     });
                 """.trimIndent(),
@@ -385,24 +384,24 @@ abstract class MileusActivity : AppCompatActivity() {
             origin?.let {
                 appendQueryParameter("origin_lat", it.latitude.toString())
                 appendQueryParameter("origin_lon", it.longitude.toString())
-                appendQueryParameter("origin_address_line_1", it.addressLine1)
-                it.addressLine2?.let { line2 ->
+                appendQueryParameter("origin_address_line_1", it.address.firstLine)
+                it.address.secondLine?.let { line2 ->
                     appendQueryParameter("origin_address_line_2", line2)
                 }
             }
             destination?.let {
                 appendQueryParameter("destination_lat", it.latitude.toString())
                 appendQueryParameter("destination_lon", it.longitude.toString())
-                appendQueryParameter("destination_address_line_1", it.addressLine1)
-                it.addressLine2?.let { line2 ->
+                appendQueryParameter("destination_address_line_1", it.address.firstLine)
+                it.address.secondLine?.let { line2 ->
                     appendQueryParameter("destination_address_line_2", line2)
                 }
             }
             home?.let {
                 appendQueryParameter("home_lat", it.latitude.toString())
                 appendQueryParameter("home_lon", it.longitude.toString())
-                appendQueryParameter("home_address_line_1", it.addressLine1)
-                it.addressLine2?.let { line2 ->
+                appendQueryParameter("home_address_line_1", it.address.firstLine)
+                it.address.secondLine?.let { line2 ->
                     appendQueryParameter("home_address_line_2", line2)
                 }
             }
