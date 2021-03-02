@@ -17,6 +17,18 @@ internal var Bundle.token: String
         putString(BundleKeys.TOKEN, value)
     }
 
+internal var Bundle.partnerName: String
+    get() = getString(BundleKeys.PARTNER_NAME) ?: ""
+    set(value) {
+        putString(BundleKeys.PARTNER_NAME, value)
+    }
+
+internal var Bundle.environment: String
+    get() = getString(BundleKeys.ENVIRONMENT) ?: ""
+    set(value) {
+        putString(BundleKeys.ENVIRONMENT, value)
+    }
+
 internal var Bundle.location: Location?
     get() = getParcelable(BundleKeys.LOCATION)
     set(value) {
@@ -81,6 +93,8 @@ var Bundle.searchType: String?
 
 internal object BundleKeys {
     const val TOKEN = "TOKEN"
+    const val PARTNER_NAME = "PARTNER_NAME"
+    const val ENVIRONMENT = "ENVIRONMENT"
     const val LOCATION = "LOCATION"
     const val ORIGIN = "ORIGIN"
     const val DESTINATION = "DESTINATION"

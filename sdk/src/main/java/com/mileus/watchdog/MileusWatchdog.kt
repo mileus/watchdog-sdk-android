@@ -58,6 +58,8 @@ object MileusWatchdog {
      * [returnLocationAndFinishActivity] after a location is selected. Use [searchType] to find out
      * which location is being requested if you're reusing the same activity for multiple purposes.
      * Use [currentOrigin] to obtain the old origin location.
+     * Always set this value within your application class, as the Mileus activities will not
+     * preserve it when the process gets killed.
      */
     var originSearchActivityIntent: Intent? = null
 
@@ -66,6 +68,8 @@ object MileusWatchdog {
      * [returnLocationAndFinishActivity] after a location is selected. Use [searchType] to find out
      * which location is being requested if you're reusing the same activity for multiple purposes.
      * Use [currentDestination] to obtain the old destination location.
+     * Always set this value within your application class, as the Mileus activities will not
+     * preserve it when the process gets killed.
      */
     var destinationSearchActivityIntent: Intent? = null
 
@@ -74,18 +78,24 @@ object MileusWatchdog {
      * [returnLocationAndFinishActivity] after a location is selected. Use [searchType] to find out
      * which location is being requested if you're reusing the same activity for multiple purposes.
      * Use [currentHome] to obtain the old home location.
+     * Always set this value within your application class, as the Mileus activities will not
+     * preserve it when the process gets killed.
      */
     var homeSearchActivityIntent: Intent? = null
 
     /**
      * The intent used for opening the last screen of the Mileus flow. Must be an activity that
      * implements that screen.
+     * Always set this value within your application class, as the Mileus activities will not
+     * preserve it when the process gets killed.
      */
     var taxiRideActivityIntent: Intent? = null
 
     /**
      * The notification info used to customize the notifications displayed when a foreground service
      * is running.
+     * Always set this value within your application class, as the Mileus activities will not
+     * preserve it when the process gets killed.
      */
     var foregroundServiceNotificationInfo: NotificationInfo? = null
 
@@ -154,7 +164,6 @@ object MileusWatchdog {
         destination: Location? = null
     ) = Intent(context, MileusWatchdogActivity::class.java).updateExtras {
         assertInitialized()
-        token = accessToken
         this.origin = origin
         this.destination = destination
     }
@@ -180,7 +189,6 @@ object MileusWatchdog {
         home: Location? = null
     ) = Intent(context, MileusWatchdogSchedulingActivity::class.java).updateExtras {
         assertInitialized()
-        token = accessToken
         this.home = home
     }
 
@@ -210,7 +218,6 @@ object MileusWatchdog {
         destination: Location
     ) = Intent(context, MileusMarketValidationActivity::class.java).updateExtras {
         assertInitialized()
-        token = accessToken
         this.origin = origin
         this.destination = destination
     }

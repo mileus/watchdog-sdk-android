@@ -41,8 +41,8 @@ abstract class MileusActivity : AppCompatActivity() {
     protected var destination: Location? = null
     protected var home: Location? = null
     protected lateinit var token: String
-    protected var partnerName = MileusWatchdog.partnerName
-    protected var environment = MileusWatchdog.environment
+    protected lateinit var partnerName: String
+    protected lateinit var environment: String
 
     protected val baseUrl: String
         get() = when (environment) {
@@ -113,11 +113,13 @@ abstract class MileusActivity : AppCompatActivity() {
         setContentView(R.layout.activity_mileus_watchdog)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
+        restoreState(savedInstanceState)
         MileusWatchdog.assertInitialized()
 
+        token = MileusWatchdog.accessToken
         partnerName = MileusWatchdog.partnerName
+        environment = MileusWatchdog.environment
         fetchIntentExtras()
-        restoreState(savedInstanceState)
 
         initToolbar()
         initWebView(savedInstanceState)
@@ -127,15 +129,38 @@ abstract class MileusActivity : AppCompatActivity() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        webview?.saveState(outState)
+
+        outState.let {
+            it.token = token
+            it.partnerName = partnerName
+            it.environment = environment
+
+            it.origin = origin
+            it.destination = destination
+            it.home = home
+            it.toolbarText = toolbarText
+            it.isInfoIconVisible = isInfoIconVisible
+        }
+    }
+
     private fun fetchIntentExtras() {
         origin = intent.extras?.origin
         destination = intent.extras?.destination
         home = intent.extras?.home
-        token = intent.extras?.token ?: throw IllegalStateException("Missing access token.")
     }
 
     private fun restoreState(savedInstanceState: Bundle?) {
         savedInstanceState?.let {
+            if (!MileusWatchdog.isInitialized) {
+                val token = it.token
+                val partnerName = it.partnerName
+                val env = it.environment
+                MileusWatchdog.init(token, partnerName, env)
+            }
+
             it.origin?.let { origin = it }
             it.destination?.let { destination = it }
             it.home?.let { home = it }
@@ -215,19 +240,6 @@ abstract class MileusActivity : AppCompatActivity() {
             loadWeb()
         } else {
             webview?.restoreState(savedInstanceState)
-        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        webview?.saveState(outState)
-
-        outState.let {
-            it.origin = origin
-            it.destination = destination
-            it.home = home
-            it.toolbarText = toolbarText
-            it.isInfoIconVisible = isInfoIconVisible
         }
     }
 
