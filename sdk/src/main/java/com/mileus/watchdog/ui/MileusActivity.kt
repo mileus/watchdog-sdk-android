@@ -409,10 +409,10 @@ abstract class MileusActivity : AppCompatActivity() {
         }
 
     private fun onNavigateBack() {
-        webview?.evaluateJavascript("window.handleBackEvent()") {
-            if (it != "true") {
-                finish()
-            }
+        if (webview?.canGoBack() == true) {
+            webview?.goBack()
+        } else {
+            super.onBackPressed()
         }
     }
 
