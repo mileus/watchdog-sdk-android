@@ -41,12 +41,12 @@ class LocationSearchActivity : AppCompatActivity() {
             try {
                 returnLocationAndFinishActivity(
                     Location(
+                        location_search_latitude.text.toString().toDouble(),
+                        location_search_longitude.text.toString().toDouble(),
                         Address(
                             location_search_address.text.toString(),
                             location_search_address_2.text.toString()
-                        ),
-                        location_search_latitude.text.toString().toDouble(),
-                        location_search_longitude.text.toString().toDouble()
+                        )
                     )
                 )
             } catch (e: NumberFormatException) {

@@ -112,30 +112,30 @@ class MainActivity : AppCompatActivity() {
 
         try {
             val originLocation = Location(
+                main_origin_latitude.text.toString().toCoordinate(),
+                main_origin_longitude.text.toString().toCoordinate(),
                 Address(
                     main_origin_address.text.toString(),
                     main_origin_address_2.text.toString()
-                ),
-                main_origin_latitude.text.toString().toCoordinate(),
-                main_origin_longitude.text.toString().toCoordinate()
+                )
             )
 
             val destinationLocation = Location(
+                main_destination_latitude.text.toString().toCoordinate(),
+                main_destination_longitude.text.toString().toCoordinate(),
                 Address(
                     main_destination_address.text.toString(),
                     main_destination_address_2.text.toString()
-                ),
-                main_destination_latitude.text.toString().toCoordinate(),
-                main_destination_longitude.text.toString().toCoordinate()
+                )
             )
 
             val homeLocation = Location(
+                main_home_latitude.text.toString().toCoordinate(),
+                main_home_longitude.text.toString().toCoordinate(),
                 Address(
                     main_home_address.text.toString(),
                     main_home_address_2.text.toString()
-                ),
-                main_home_latitude.text.toString().toCoordinate(),
-                main_home_longitude.text.toString().toCoordinate()
+                )
             )
 
             initSdkFromInputs()
