@@ -64,14 +64,16 @@ class MileusWatchdogSchedulingActivity : MileusActivity() {
                 android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         }
-        webview?.evaluateJavascript(
-            """
+        runOnUiThread {
+            webview?.evaluateJavascript(
+                """
                 window.onVerifyBackgroundLocationPermissionResult({ 
-                    granted: "$permissionsGranted"
+                    granted: $permissionsGranted
                 })
             """.trimIndent(),
-            null
-        )
+                null
+            )
+        }
     }
 
     @JavascriptInterface
@@ -85,10 +87,9 @@ class MileusWatchdogSchedulingActivity : MileusActivity() {
         }
 
         if (permissionsGranted) {
-            webview?.evaluateJavascript(
-                "window.onRequestBackgroundLocationPermissionResult({ granted: \"true\" })",
-                null
-            )
+            runOnUiThread {
+                notifyRequestBackgroundLocationResult(true)
+            }
         } else {
             // at this point we can safely assume the OS version is >= Q
             requestPermission.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
@@ -109,11 +110,15 @@ class MileusWatchdogSchedulingActivity : MileusActivity() {
             }
             startActivityForResult(intent, REQUEST_CODE_SETTINGS_BG_LOCATION)
         } else {
-            webview?.evaluateJavascript(
-                "window.onRequestBackgroundLocationPermissionResult({ granted: \"$result\" })",
-                null
-            )
+            notifyRequestBackgroundLocationResult(result)
         }
+    }
+
+    private fun notifyRequestBackgroundLocationResult(result: Boolean) {
+        webview?.evaluateJavascript(
+            "window.onRequestBackgroundLocationPermissionResult({ granted: $result })",
+            null
+        )
     }
 
     private fun onRequestBackgroundLocationSettingsResult() {
@@ -125,13 +130,6 @@ class MileusWatchdogSchedulingActivity : MileusActivity() {
             ) == PackageManager.PERMISSION_GRANTED
         }
 
-        webview?.evaluateJavascript(
-            """
-                window.onRequestBackgroundLocationPermissionResult({ 
-                    granted: "$permissionsGranted" 
-                })
-            """.trimIndent(),
-            null
-        )
+        notifyRequestBackgroundLocationResult(permissionsGranted)
     }
 }
