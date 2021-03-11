@@ -83,7 +83,11 @@ class MainActivity : AppCompatActivity() {
 
         main_open_market_validation_activity.setOnClickListener {
             handleButtonClick(false) { origin, destination, _ ->
-                MileusWatchdog.startMarketValidationActivity(this, origin, destination)
+                if (origin == null || destination == null) {
+                    Toast.makeText(this, R.string.number_format_error, Toast.LENGTH_LONG).show()
+                } else {
+                    MileusWatchdog.startMarketValidationActivity(this, origin, destination)
+                }
             }
         }
 
@@ -92,7 +96,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleButtonClick(
         requireFineLocation: Boolean = true,
-        callback: (origin: Location, destination: Location, home: Location) -> Unit
+        callback: (origin: Location?, destination: Location?, home: Location?) -> Unit
     ) {
 
         val permissionFine = !requireFineLocation || ContextCompat.checkSelfPermission(
@@ -110,8 +114,8 @@ class MainActivity : AppCompatActivity() {
 
         fun String.toCoordinate() = replace(',', '.').toDouble()
 
-        try {
-            val originLocation = Location(
+        val originLocation = runCatching {
+            Location(
                 main_origin_latitude.text.toString().toCoordinate(),
                 main_origin_longitude.text.toString().toCoordinate(),
                 Address(
@@ -119,8 +123,10 @@ class MainActivity : AppCompatActivity() {
                     main_origin_address_2.text.toString()
                 )
             )
+        }.getOrNull()
 
-            val destinationLocation = Location(
+        val destinationLocation = runCatching {
+            Location(
                 main_destination_latitude.text.toString().toCoordinate(),
                 main_destination_longitude.text.toString().toCoordinate(),
                 Address(
@@ -128,8 +134,10 @@ class MainActivity : AppCompatActivity() {
                     main_destination_address_2.text.toString()
                 )
             )
+        }.getOrNull()
 
-            val homeLocation = Location(
+        val homeLocation = runCatching {
+            Location(
                 main_home_latitude.text.toString().toCoordinate(),
                 main_home_longitude.text.toString().toCoordinate(),
                 Address(
@@ -137,17 +145,15 @@ class MainActivity : AppCompatActivity() {
                     main_home_address_2.text.toString()
                 )
             )
+        }.getOrNull()
 
-            initSdkFromInputs()
+        initSdkFromInputs()
 
-            callback(
-                originLocation,
-                destinationLocation,
-                homeLocation
-            )
-        } catch (e: NumberFormatException) {
-            Toast.makeText(this, R.string.number_format_error, Toast.LENGTH_LONG).show()
-        }
+        callback(
+            originLocation,
+            destinationLocation,
+            homeLocation
+        )
     }
 
     private fun initSdkFromInputs() {
