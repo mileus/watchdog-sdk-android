@@ -17,6 +17,7 @@ import android.view.View
 import android.webkit.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.mileus.sdk.R
 import com.mileus.watchdog.*
 import com.mileus.watchdog.data.Location
@@ -210,7 +211,7 @@ abstract class MileusActivity : AppCompatActivity() {
                     view: WebView?,
                     request: WebResourceRequest?
                 ): Boolean {
-                    return request?.url?.host?.contains(baseUrl)?.not() ?: false
+                    return request?.url?.host?.contains(baseUrl.toUri().host ?: "")?.not() ?: false
                 }
 
                 override fun onPageFinished(view: WebView?, url: String?) {
