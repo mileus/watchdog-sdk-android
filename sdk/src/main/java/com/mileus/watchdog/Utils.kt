@@ -3,6 +3,7 @@ package com.mileus.watchdog
 import android.content.Intent
 import android.os.Bundle
 import com.mileus.watchdog.data.Location
+import com.mileus.watchdog.ui.MileusActivity
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.Call
 import okhttp3.Callback
@@ -10,6 +11,23 @@ import okhttp3.Response
 import java.io.IOException
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.resume
+
+// internal activity state:
+
+internal var Bundle.toolbarText: String?
+    get() = getString("toolbar")
+    set(value) {
+        putString("toolbar", value)
+    }
+
+internal var Bundle.isInfoIconVisible: Boolean
+    get() = getBoolean("infoicon", false)
+    set(value) {
+        putBoolean("infoicon", value)
+    }
+
+
+// global Mileus SDK state:
 
 internal var Bundle.token: String
     get() = getString(BundleKeys.TOKEN) ?: ""
@@ -29,10 +47,18 @@ internal var Bundle.environment: String
         putString(BundleKeys.ENVIRONMENT, value)
     }
 
+// activity arguments:
+
 internal var Bundle.location: Location?
     get() = getParcelable(BundleKeys.LOCATION)
     set(value) {
         putParcelable(BundleKeys.LOCATION, value)
+    }
+
+internal var Bundle.screen: MileusActivity.Screen?
+    get() = MileusActivity.Screen.valueOf(getString(BundleKeys.SCREEN, ""))
+    set(value) {
+        putString(BundleKeys.SCREEN, value.toString())
     }
 
 internal var Bundle.origin: Location?
@@ -96,6 +122,7 @@ internal object BundleKeys {
     const val PARTNER_NAME = "PARTNER_NAME"
     const val ENVIRONMENT = "ENVIRONMENT"
     const val LOCATION = "LOCATION"
+    const val SCREEN = "screen"
     const val ORIGIN = "ORIGIN"
     const val DESTINATION = "DESTINATION"
     const val HOME = "HOME"

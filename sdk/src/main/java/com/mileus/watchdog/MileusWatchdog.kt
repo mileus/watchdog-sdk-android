@@ -6,9 +6,7 @@ import android.content.Intent
 import com.mileus.watchdog.data.Location
 import com.mileus.watchdog.data.NotificationInfo
 import com.mileus.watchdog.service.LocationUpdatesService
-import com.mileus.watchdog.ui.MileusMarketValidationActivity
-import com.mileus.watchdog.ui.MileusWatchdogActivity
-import com.mileus.watchdog.ui.MileusWatchdogSchedulingActivity
+import com.mileus.watchdog.ui.MileusActivity
 
 /**
  * Encapsulates all Mileus SDK-related methods and attributes. Make sure to call [init] prior
@@ -162,8 +160,9 @@ object MileusWatchdog {
         context: Context,
         origin: Location? = null,
         destination: Location? = null
-    ) = Intent(context, MileusWatchdogActivity::class.java).updateExtras {
+    ) = Intent(context, MileusActivity::class.java).updateExtras {
         assertInitialized()
+        screen = MileusActivity.Screen.WATCHDOG
         this.origin = origin
         this.destination = destination
     }
@@ -187,8 +186,9 @@ object MileusWatchdog {
     fun createWatchdogSchedulingActivityIntent(
         context: Context,
         home: Location? = null
-    ) = Intent(context, MileusWatchdogSchedulingActivity::class.java).updateExtras {
+    ) = Intent(context, MileusActivity::class.java).updateExtras {
         assertInitialized()
+        screen = MileusActivity.Screen.SCHEDULING
         this.home = home
     }
 
@@ -216,8 +216,9 @@ object MileusWatchdog {
         context: Context,
         origin: Location,
         destination: Location
-    ) = Intent(context, MileusMarketValidationActivity::class.java).updateExtras {
+    ) = Intent(context, MileusActivity::class.java).updateExtras {
         assertInitialized()
+        screen = MileusActivity.Screen.MARKET_VALIDATION
         this.origin = origin
         this.destination = destination
     }

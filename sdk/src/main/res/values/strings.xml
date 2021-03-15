@@ -3,7 +3,7 @@
     <string name="webview_load_error">Check your internet connection and try again later.</string>
     <string name="webview_retry">Try again</string>
 
-    <string name="market_validation_title">Public transport + Taxi</string>
+    <string name="watchdog_title">Public transport + Taxi</string>
 
     <string name="menu_item_info">Info</string>
 

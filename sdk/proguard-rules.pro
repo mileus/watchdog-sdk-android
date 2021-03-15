@@ -6,17 +6,7 @@
     public *;
 }
 
--keep class com.mileus.watchdog.ui.MileusWatchdogActivity {
-    public *;
-    protected *;
-}
-
--keep class com.mileus.watchdog.ui.MileusMarketValidationActivity {
-    public *;
-    protected *;
-}
-
--keep class com.mileus.watchdog.ui.MileusWatchdogSchedulingActivity {
+-keep class com.mileus.watchdog.ui.MileusActivity {
     public *;
     protected *;
 }

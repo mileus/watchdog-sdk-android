@@ -12,11 +12,7 @@
             android:name="com.mileus.watchdog.service.LocationUpdatesService"
             android:foregroundServiceType="location" />
 
-        <activity android:name="com.mileus.watchdog.ui.MileusWatchdogActivity" />
-
-        <activity android:name="com.mileus.watchdog.ui.MileusMarketValidationActivity" />
-
-        <activity android:name="com.mileus.watchdog.ui.MileusWatchdogSchedulingActivity" />
+        <activity android:name="com.mileus.watchdog.ui.MileusActivity" />
 
     </application>
 
