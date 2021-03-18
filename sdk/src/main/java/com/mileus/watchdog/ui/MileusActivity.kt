@@ -1,6 +1,5 @@
 package com.mileus.watchdog.ui
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
@@ -14,11 +13,8 @@ import android.net.NetworkRequest
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.View
 import android.webkit.*
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -27,14 +23,13 @@ import com.mileus.watchdog.*
 import com.mileus.watchdog.data.Location
 import kotlinx.android.synthetic.main.activity_mileus_watchdog.*
 
-class MileusActivity : AppCompatActivity() {
+abstract class MileusActivity : AppCompatActivity() {
 
     companion object {
         private const val URL_DEVELOPMENT = "https://mileus-spacek.vercel.app/"
         private const val URL_STAGING = "https://watchdog-web-stage.mileus.com/"
         private const val URL_PRODUCTION = "https://watchdog-web.mileus.com/"
 
-        private const val REQUEST_CODE_SETTINGS_BG_LOCATION = 2504
         private const val REQUEST_CODE_ORIGIN_SEARCH = 2501
         private const val REQUEST_CODE_DESTINATION_SEARCH = 2502
         private const val REQUEST_CODE_HOME_SEARCH = 2503
@@ -43,10 +38,11 @@ class MileusActivity : AppCompatActivity() {
         private const val SEARCH_TYPE_HOME = "home"
     }
 
-    private lateinit var screen: Screen
-    private var origin: Location? = null
-    private var destination: Location? = null
-    private var home: Location? = null
+    protected abstract val screenOriginal: Screen
+
+    protected var origin: Location? = null
+    protected var destination: Location? = null
+    protected var home: Location? = null
     private lateinit var token: String
     private lateinit var partnerName: String
     private lateinit var environment: String
@@ -84,10 +80,10 @@ class MileusActivity : AppCompatActivity() {
                 Resources.getSystem().configuration.locale.language
         }
 
-    private var webview: WebView? = null
+    protected var webview: WebView? = null
 
     private val defaultToolbarText: String
-        get() = screen.defaultToolbarTextRes?.let { resources.getString(it) } ?: ""
+        get() = screenOriginal.defaultToolbarTextRes?.let { resources.getString(it) } ?: ""
 
     private var toolbarText: String? = null
     private var isInfoIconVisible = false
@@ -104,29 +100,17 @@ class MileusActivity : AppCompatActivity() {
         }
     }
 
-    private lateinit var requestPermission: ActivityResultLauncher<String>
-
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.MileusTheme_Final)
         setContentView(R.layout.activity_mileus_watchdog)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        requestPermission = registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { onRequestBackgroundLocationResult(it) }
 
         // the state must be always restored before checking for initialization, since the SDK might
         // be re-initialized from the restored state
         restoreState(savedInstanceState)
         MileusWatchdog.assertInitialized()
-        throwIfNotGranted(Manifest.permission.ACCESS_FINE_LOCATION)
-
-        if (MileusWatchdog.foregroundServiceNotificationInfo == null) {
-            val msg =
-                "Cannot start activity, foreground service notification info has not been set up."
-            throw IllegalStateException(msg)
-        }
 
         token = MileusWatchdog.accessToken
         partnerName = MileusWatchdog.partnerName
@@ -159,16 +143,12 @@ class MileusActivity : AppCompatActivity() {
     }
 
     private fun fetchIntentExtras() {
-        screen = intent.extras?.screen
-            ?: throw IllegalStateException(
-                "Missing the screen argument. Did you start the activity manually?"
-            )
         origin = intent.extras?.origin
         destination = intent.extras?.destination
         home = intent.extras?.home
     }
 
-    private fun restoreState(savedInstanceState: Bundle?) {
+    protected fun restoreState(savedInstanceState: Bundle?) {
         savedInstanceState?.let {
             if (!MileusWatchdog.isInitialized) {
                 val token = it.token
@@ -281,9 +261,7 @@ class MileusActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_CODE_SETTINGS_BG_LOCATION) { // not expecting an OK result
-            onRequestBackgroundLocationSettingsResult()
-        } else if (resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 REQUEST_CODE_ORIGIN_SEARCH -> {
                     origin = data?.extras?.location
@@ -310,47 +288,6 @@ class MileusActivity : AppCompatActivity() {
         mileus_progress.visibility = View.VISIBLE
         mileus_error.visibility = View.GONE
         webview?.loadUrl(buildUrl())
-    }
-
-    @JavascriptInterface
-    fun verifyBackgroundLocationPermission() {
-        var permissionsGranted = true
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            permissionsGranted = permissionsGranted && ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        }
-        runOnUiThread {
-            webview?.evaluateJavascript(
-                """
-                window.onVerifyBackgroundLocationPermissionResult({ 
-                    granted: $permissionsGranted
-                })
-            """.trimIndent(),
-                null
-            )
-        }
-    }
-
-    @JavascriptInterface
-    fun requestBackgroundLocationPermission() {
-        var permissionsGranted = true
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            permissionsGranted = permissionsGranted && ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        }
-
-        if (permissionsGranted) {
-            runOnUiThread {
-                notifyRequestBackgroundLocationResult(true)
-            }
-        } else {
-            // at this point we can safely assume the OS version is >= Q
-            requestPermission.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-        }
     }
 
     @JavascriptInterface
@@ -391,57 +328,12 @@ class MileusActivity : AppCompatActivity() {
     }
 
     @JavascriptInterface
-    fun startLocationScanning() {
-        MileusWatchdog.onSearchStartingSoon(this)
-    }
-
-    @JavascriptInterface
     fun openTaxiRideScreen() = startActivity(taxiRideActivityIntent)
 
     @JavascriptInterface
     fun openTaxiRideScreenAndFinish() {
         finish()
         startActivity(taxiRideActivityIntent)
-    }
-
-    @JavascriptInterface
-    fun finishMarketValidation() = finish()
-
-    private fun onRequestBackgroundLocationResult(result: Boolean) {
-        var shouldShowRationale = true
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            shouldShowRationale = shouldShowRationale &&
-                    shouldShowRequestPermissionRationale(
-                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                    )
-        }
-        if (!result && !shouldShowRationale) {
-            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                data = Uri.fromParts("package", packageName, null)
-            }
-            startActivityForResult(intent, REQUEST_CODE_SETTINGS_BG_LOCATION)
-        } else {
-            notifyRequestBackgroundLocationResult(result)
-        }
-    }
-
-    private fun notifyRequestBackgroundLocationResult(result: Boolean) {
-        webview?.evaluateJavascript(
-            "window.onRequestBackgroundLocationPermissionResult({ granted: $result })",
-            null
-        )
-    }
-
-    private fun onRequestBackgroundLocationSettingsResult() {
-        var permissionsGranted = true
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            permissionsGranted = permissionsGranted && ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        }
-
-        notifyRequestBackgroundLocationResult(permissionsGranted)
     }
 
     private fun updateLocationsInJs() {
@@ -500,14 +392,14 @@ class MileusActivity : AppCompatActivity() {
         .appendQueryParameter("access_token", token)
         .appendQueryParameter("language", language)
         .appendQueryParameter("platform", "android")
-        .appendQueryParameter("screen", screen.urlValue).run {
+        .appendQueryParameter("screen", screenOriginal.urlValue).run {
             origin?.let {
                 appendQueryParameter("origin_lat", it.latitude.toString())
                 appendQueryParameter("origin_lon", it.longitude.toString())
                 it.address?.let { address ->
-                    appendQueryParameter("origin_address_line_1", address.firstLine)
+                    appendQueryParameter("origin_address_line_1", address.firstLine.sanitize())
                     address.secondLine?.let { line2 ->
-                        appendQueryParameter("origin_address_line_2", line2)
+                        appendQueryParameter("origin_address_line_2", line2.sanitize())
                     }
                 }
             }
@@ -515,9 +407,9 @@ class MileusActivity : AppCompatActivity() {
                 appendQueryParameter("destination_lat", it.latitude.toString())
                 appendQueryParameter("destination_lon", it.longitude.toString())
                 it.address?.let { address ->
-                    appendQueryParameter("destination_address_line_1", address.firstLine)
+                    appendQueryParameter("destination_address_line_1", address.firstLine.sanitize())
                     address.secondLine?.let { line2 ->
-                        appendQueryParameter("destination_address_line_2", line2)
+                        appendQueryParameter("destination_address_line_2", line2.sanitize())
                     }
                 }
             }
@@ -525,9 +417,9 @@ class MileusActivity : AppCompatActivity() {
                 appendQueryParameter("home_lat", it.latitude.toString())
                 appendQueryParameter("home_lon", it.longitude.toString())
                 it.address?.let { address ->
-                    appendQueryParameter("home_address_line_1", address.firstLine)
+                    appendQueryParameter("home_address_line_1", address.firstLine.sanitize())
                     address.secondLine?.let { line2 ->
-                        appendQueryParameter("home_address_line_2", line2)
+                        appendQueryParameter("home_address_line_2", line2.sanitize())
                     }
                 }
             }
@@ -542,7 +434,7 @@ class MileusActivity : AppCompatActivity() {
         }
     }
 
-    private fun throwIfNotGranted(permission: String) {
+    protected fun throwIfNotGranted(permission: String) {
         val permissionsGranted = ContextCompat.checkSelfPermission(
             this,
             permission

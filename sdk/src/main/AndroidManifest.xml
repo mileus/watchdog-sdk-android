@@ -12,7 +12,8 @@
             android:name="com.mileus.watchdog.service.LocationUpdatesService"
             android:foregroundServiceType="location" />
 
-        <activity android:name="com.mileus.watchdog.ui.MileusActivity" />
+        <activity android:name="com.mileus.watchdog.ui.WatchdogActivity" />
+        <activity android:name="com.mileus.watchdog.ui.MarketValidationActivity" />
 
     </application>
 
