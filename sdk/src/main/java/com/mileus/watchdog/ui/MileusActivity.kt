@@ -38,7 +38,7 @@ abstract class MileusActivity : AppCompatActivity() {
         private const val SEARCH_TYPE_HOME = "home"
     }
 
-    protected abstract val screenOriginal: Screen
+    protected abstract val initialScreen: Screen
 
     protected var origin: Location? = null
     protected var destination: Location? = null
@@ -83,7 +83,7 @@ abstract class MileusActivity : AppCompatActivity() {
     protected var webview: WebView? = null
 
     private val defaultToolbarText: String
-        get() = screenOriginal.defaultToolbarTextRes?.let { resources.getString(it) } ?: ""
+        get() = initialScreen.defaultToolbarTextRes?.let { resources.getString(it) } ?: ""
 
     private var toolbarText: String? = null
     private var isInfoIconVisible = false
@@ -392,7 +392,7 @@ abstract class MileusActivity : AppCompatActivity() {
         .appendQueryParameter("access_token", token)
         .appendQueryParameter("language", language)
         .appendQueryParameter("platform", "android")
-        .appendQueryParameter("screen", screenOriginal.urlValue).run {
+        .appendQueryParameter("screen", initialScreen.urlValue).run {
             origin?.let {
                 appendQueryParameter("origin_lat", it.latitude.toString())
                 appendQueryParameter("origin_lon", it.longitude.toString())

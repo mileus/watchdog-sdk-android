@@ -4,7 +4,7 @@ import android.webkit.JavascriptInterface
 
 class MarketValidationActivity : MileusActivity() {
 
-    override val screenOriginal = Screen.MARKET_VALIDATION
+    override val initialScreen = Screen.MARKET_VALIDATION
 
     @JavascriptInterface
     fun finishMarketValidation() = finish()

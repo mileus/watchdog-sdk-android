@@ -20,7 +20,7 @@ class WatchdogActivity : MileusActivity() {
         private const val REQUEST_CODE_SETTINGS_BG_LOCATION = 2504
     }
 
-    override val screenOriginal: Screen
+    override val initialScreen: Screen
         get() = intent.extras?.screen ?: throw IllegalStateException(
             "Missing the screen argument. Did you start the activity manually?"
         )
