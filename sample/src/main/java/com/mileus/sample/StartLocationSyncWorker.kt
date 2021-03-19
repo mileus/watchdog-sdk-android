@@ -16,13 +16,17 @@ class StartLocationSyncWorker(
     }
 
     override fun doWork(): Result {
-        context.getSharedPreferences(MainActivity::class.simpleName, Context.MODE_PRIVATE).apply {
-            val token = getString(MainActivity.KEY_TOKEN, "") ?: ""
-            val partner = getString(MainActivity.KEY_PARTNER_NAME, "demo") ?: "demo"
-            val env = getString(MainActivity.KEY_ENV, MileusWatchdog.ENV_STAGING)
-                ?: MileusWatchdog.ENV_STAGING
-            MileusWatchdog.init(token, partner, env)
+        if (!MileusWatchdog.isInitialized) {
+            context.getSharedPreferences(MainActivity.PREF_SAMPLE_APP, Context.MODE_PRIVATE)
+                .apply {
+                    val token = getString(MainActivity.KEY_TOKEN, "") ?: ""
+                    val partner = getString(MainActivity.KEY_PARTNER_NAME, "demo") ?: "demo"
+                    val env = getString(MainActivity.KEY_ENV, MileusWatchdog.ENV_STAGING)
+                        ?: MileusWatchdog.ENV_STAGING
+                    MileusWatchdog.init(token, partner, env)
+                }
         }
+
         MileusWatchdog.onSearchStartingSoon(context)
         return Result.success()
     }

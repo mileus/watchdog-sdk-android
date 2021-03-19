@@ -25,6 +25,8 @@ class MainActivity : AppCompatActivity() {
         const val KEY_TOKEN = "KEY_TOKEN"
         const val KEY_PARTNER_NAME = "KEY_PARTNER_NAME"
         const val KEY_ENV = "KEY_ENV"
+
+        const val PREF_SAMPLE_APP = "mileussampleapp"
     }
 
     private lateinit var requestPermission: ActivityResultLauncher<String>
@@ -57,7 +59,7 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        getPreferences(Context.MODE_PRIVATE).apply {
+        getSharedPreferences(PREF_SAMPLE_APP, Context.MODE_PRIVATE).apply {
             main_token.setText(getString(KEY_TOKEN, ""))
             main_partner_name.setText(getString(KEY_PARTNER_NAME, "demo"))
             main_env.setSelection(
@@ -160,7 +162,7 @@ class MainActivity : AppCompatActivity() {
         val token = main_token.text.toString()
         val partnerName = main_partner_name.text.toString()
         val env = main_env.selectedItem.toString()
-        getPreferences(Context.MODE_PRIVATE).edit().apply {
+        getSharedPreferences(PREF_SAMPLE_APP, Context.MODE_PRIVATE).edit().apply {
             putString(KEY_TOKEN, token)
             putString(KEY_PARTNER_NAME, partnerName)
             putString(KEY_ENV, env)
