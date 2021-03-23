@@ -34,7 +34,7 @@ class LocationUpdatesService : Service() {
         private const val INTERVAL_MS = 30000L
         private const val TIMEOUT_MS = 120000L
 
-        private const val URL_DEVELOPMENT = "https://mileus-spacek.vercel.app/"
+        private const val URL_DEVELOPMENT = "https://api-stage.mileus.com/"
         private const val URL_STAGING = "https://api-stage.mileus.com/"
         private const val URL_PRODUCTION = "https://api.mileus.com/"
 
