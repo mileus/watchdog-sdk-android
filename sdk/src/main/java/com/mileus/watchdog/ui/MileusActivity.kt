@@ -310,17 +310,17 @@ abstract class MileusActivity : AppCompatActivity() {
     @JavascriptInterface
     fun openSearchScreen(
         searchType: String,
-        oldLatitude: Double?,
-        oldLongitude: Double?,
-        oldAddressFirstLine: String?,
-        oldAddressSecondLine: String?
+        currentLatitude: Double?,
+        currentLongitude: Double?,
+        currentAddressFirstLine: String?,
+        currentAddressSecondLine: String?
     ) {
 
-        val location = if (oldAddressFirstLine != null && oldLatitude != null && oldLongitude != null) {
-            val address = Address(oldAddressFirstLine, oldAddressSecondLine)
+        val location = if (currentAddressFirstLine != null && currentLatitude != null && currentLongitude != null) {
+            val address = Address(currentAddressFirstLine, currentAddressSecondLine)
             Location(
-                oldLatitude,
-                oldLongitude,
+                currentLatitude,
+                currentLongitude,
                 address
             )
         } else null
