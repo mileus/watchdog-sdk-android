@@ -61,10 +61,10 @@ class WatchdogActivity : MileusActivity() {
         runOnUiThread {
             webview?.evaluateJavascript(
                 """
-                window.onVerifyBackgroundLocationPermissionResult({ 
-                    granted: $permissionsGranted
-                })
-            """.trimIndent(),
+                    window.onVerifyBackgroundLocationPermissionResult({ 
+                        granted: $permissionsGranted
+                    })
+                """.trimIndent(),
                 null
             )
         }

@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.mileus.sdk.R
 import com.mileus.watchdog.*
+import com.mileus.watchdog.data.Address
 import com.mileus.watchdog.data.Location
 import kotlinx.android.synthetic.main.activity_mileus_watchdog.*
 
@@ -307,23 +308,44 @@ abstract class MileusActivity : AppCompatActivity() {
     }
 
     @JavascriptInterface
-    fun openSearchScreen(searchType: String) {
+    fun openSearchScreen(
+        searchType: String,
+        oldLatitude: Double,
+        oldLongitude: Double,
+        oldAddressFirstLine: String,
+        oldAddressSecondLine: String,
+        oldAccuracy: Float
+    ) {
+        val address = Address(oldAddressFirstLine, oldAddressSecondLine)
+        val location = Location(
+            oldLatitude,
+            oldLongitude,
+            address,
+            oldAccuracy
+        )
+
         when (searchType) {
-            SEARCH_TYPE_ORIGIN ->
+            SEARCH_TYPE_ORIGIN -> {
+                origin = location
                 startActivityForResult(
                     originSearchIntent,
                     REQUEST_CODE_ORIGIN_SEARCH
                 )
-            SEARCH_TYPE_DESTINATION ->
+            }
+            SEARCH_TYPE_DESTINATION -> {
+                destination = location
                 startActivityForResult(
                     destinationSearchIntent,
                     REQUEST_CODE_DESTINATION_SEARCH
                 )
-            SEARCH_TYPE_HOME ->
+            }
+            SEARCH_TYPE_HOME -> {
+                home = location
                 startActivityForResult(
                     homeSearchIntent,
                     REQUEST_CODE_HOME_SEARCH
                 )
+            }
         }
     }
 
