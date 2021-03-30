@@ -266,17 +266,17 @@ abstract class MileusActivity : AppCompatActivity() {
             when (requestCode) {
                 REQUEST_CODE_ORIGIN_SEARCH -> {
                     origin = data?.extras?.location
-                    updateLocationsInJs()
+                    updateOriginInJs()
                     return
                 }
                 REQUEST_CODE_DESTINATION_SEARCH -> {
                     destination = data?.extras?.location
-                    updateLocationsInJs()
+                    updateDestinationInJs()
                     return
                 }
                 REQUEST_CODE_HOME_SEARCH -> {
                     home = data?.extras?.location
-                    updateLocationsInJs()
+                    updateHomeInJs()
                     return
                 }
             }
@@ -316,14 +316,15 @@ abstract class MileusActivity : AppCompatActivity() {
         currentAddressSecondLine: String
     ) {
 
-        val location = if (currentAddressFirstLine.isNotBlank() && !(currentLatitude == 0.0 && currentLongitude == 0.0)) {
-            val address = Address(currentAddressFirstLine, currentAddressSecondLine)
-            Location(
-                currentLatitude,
-                currentLongitude,
-                address
-            )
-        } else null
+        val location =
+            if (currentAddressFirstLine.isNotBlank() && !(currentLatitude == 0.0 && currentLongitude == 0.0)) {
+                val address = Address(currentAddressFirstLine, currentAddressSecondLine)
+                Location(
+                    currentLatitude,
+                    currentLongitude,
+                    address
+                )
+            } else null
 
         when (searchType) {
             SEARCH_TYPE_ORIGIN -> {
@@ -359,7 +360,7 @@ abstract class MileusActivity : AppCompatActivity() {
         startActivity(taxiRideActivityIntent)
     }
 
-    private fun updateLocationsInJs() {
+    private fun updateOriginInJs() {
         origin?.let {
             webview?.evaluateJavascript(
                 """
@@ -374,6 +375,9 @@ abstract class MileusActivity : AppCompatActivity() {
                 null
             )
         }
+    }
+
+    private fun updateDestinationInJs() {
         destination?.let {
             webview?.evaluateJavascript(
                 """
@@ -388,6 +392,9 @@ abstract class MileusActivity : AppCompatActivity() {
                 null
             )
         }
+    }
+
+    private fun updateHomeInJs() {
         home?.let {
             webview?.evaluateJavascript(
                 """
