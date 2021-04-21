@@ -15,17 +15,11 @@ import com.mileus.watchdog.await
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.produce
-import kotlinx.coroutines.channels.receiveOrNull
-import kotlinx.coroutines.flow.cancel
-import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.resumeWithException
 
 class LocationUpdatesService : Service() {
 
@@ -43,7 +37,7 @@ class LocationUpdatesService : Service() {
         private const val RESPONSE_CODE_PROCEED = 202
     }
 
-    private val job = Job()
+    private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
 
     private lateinit var okHttpClient: OkHttpClient
