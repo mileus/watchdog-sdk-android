@@ -37,8 +37,9 @@ class LocationUpdatesService : Service() {
         private const val RESPONSE_CODE_PROCEED = 202
     }
 
-    private val job = SupervisorJob()
-    private val scope = CoroutineScope(Dispatchers.IO + job)
+    private val supervisorJob = SupervisorJob()
+    private val scope = CoroutineScope(Dispatchers.IO + supervisorJob)
+    private var childJob: Job? = null
 
     private lateinit var okHttpClient: OkHttpClient
     private lateinit var locationClient: FusedLocationProviderClient
@@ -84,6 +85,7 @@ class LocationUpdatesService : Service() {
 
         if (scope.isActive) {
             scope.cancel()
+            childJob = null
         }
     }
 
@@ -91,11 +93,11 @@ class LocationUpdatesService : Service() {
     @SuppressLint("MissingPermission")
     @Synchronized
     private fun startLocationRequest() {
-        if (scope.isActive) {
+        if (childJob != null || !scope.isActive) {
             return
         }
 
-        scope.launch {
+        childJob = scope.launch {
             try {
                 val updates = locationUpdates()
                 while (isActive) {
