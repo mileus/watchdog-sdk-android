@@ -82,12 +82,19 @@ class LocationUpdatesService : Service() {
     override fun onDestroy() {
         super.onDestroy()
 
-        scope.cancel()
+        if (scope.isActive) {
+            scope.cancel()
+        }
     }
 
     @ExperimentalCoroutinesApi
     @SuppressLint("MissingPermission")
+    @Synchronized
     private fun startLocationRequest() {
+        if (scope.isActive) {
+            return
+        }
+
         scope.launch {
             try {
                 val updates = locationUpdates()
