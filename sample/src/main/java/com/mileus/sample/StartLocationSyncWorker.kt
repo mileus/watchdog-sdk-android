@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.mileus.watchdog.MileusWatchdog
-import kotlinx.android.synthetic.main.activity_main.*
 
 class StartLocationSyncWorker(
     private val context: Context,
