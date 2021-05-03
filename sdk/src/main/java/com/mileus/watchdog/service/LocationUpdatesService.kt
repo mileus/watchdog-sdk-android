@@ -37,8 +37,9 @@ class LocationUpdatesService : Service() {
         private const val RESPONSE_CODE_PROCEED = 202
     }
 
-    private val job = Job()
-    private val scope = CoroutineScope(Dispatchers.IO + job)
+    private val supervisorJob = SupervisorJob()
+    private val scope = CoroutineScope(Dispatchers.IO + supervisorJob)
+    private var childJob: Job? = null
 
     private lateinit var okHttpClient: OkHttpClient
     private lateinit var locationClient: FusedLocationProviderClient
@@ -82,13 +83,21 @@ class LocationUpdatesService : Service() {
     override fun onDestroy() {
         super.onDestroy()
 
-        scope.cancel()
+        if (scope.isActive) {
+            scope.cancel()
+            childJob = null
+        }
     }
 
     @ExperimentalCoroutinesApi
     @SuppressLint("MissingPermission")
+    @Synchronized
     private fun startLocationRequest() {
-        scope.launch {
+        if (childJob != null || !scope.isActive) {
+            return
+        }
+
+        childJob = scope.launch {
             try {
                 val updates = locationUpdates()
                 while (isActive) {
