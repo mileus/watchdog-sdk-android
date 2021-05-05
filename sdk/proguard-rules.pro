@@ -6,6 +6,14 @@
     public *;
 }
 
+-keep class com.mileus.watchdog.data.Address {
+    public *;
+}
+
+-keep class com.mileus.watchdog.data.NotificationInfo {
+    public *;
+}
+
 -keep class com.mileus.watchdog.ui.MileusActivity {
     public *;
     protected *;
