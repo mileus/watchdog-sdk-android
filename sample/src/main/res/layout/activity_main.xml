@@ -333,6 +333,15 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:text="Watchdog"
+            app:layout_constraintBottom_toTopOf="@id/main_open_one_time" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/main_open_one_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="One Time Search"
             app:layout_constraintBottom_toTopOf="@id/main_open_market_validation_activity" />
 
         <com.google.android.material.button.MaterialButton
