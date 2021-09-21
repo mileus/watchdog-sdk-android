@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
         const val PREF_SAMPLE_APP = "mileussampleapp"
 
-        const val TEXT_ID_ONE_TIME_BANNER = ""
+        const val TEXT_ID_ONE_TIME_BANNER = "one_time_search.hopin_default"
     }
 
     private lateinit var requestPermission: ActivityResultLauncher<String>
