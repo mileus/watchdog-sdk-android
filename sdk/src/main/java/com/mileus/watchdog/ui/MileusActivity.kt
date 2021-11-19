@@ -364,11 +364,13 @@ abstract class MileusActivity : AppCompatActivity() {
 
     @JavascriptInterface
     fun finishFlow() {
+        WebStorage.getInstance().deleteAllData()
         finish()
     }
 
     @JavascriptInterface
     fun finishFlowWithError(error: String) {
+        WebStorage.getInstance().deleteAllData()
         runOnUiThread {
             throw MileusWatchdog.InvalidStateException(error)
         }
