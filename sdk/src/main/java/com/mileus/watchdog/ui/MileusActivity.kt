@@ -369,7 +369,9 @@ abstract class MileusActivity : AppCompatActivity() {
 
     @JavascriptInterface
     fun finishFlowWithError(error: String) {
-        throw MileusWatchdog.InvalidStateException(error)
+        runOnUiThread {
+            throw MileusWatchdog.InvalidStateException(error)
+        }
     }
 
     private fun updateOriginInJs() {
