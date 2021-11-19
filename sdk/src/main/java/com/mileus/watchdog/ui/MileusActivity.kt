@@ -209,7 +209,20 @@ abstract class MileusActivity : AppCompatActivity() {
                     view: WebView?,
                     request: WebResourceRequest?
                 ): Boolean {
-                    return request?.url?.host?.contains(baseUrl.toUri().host ?: "")?.not() ?: false
+                    val isMileusUrl = request?.url?.host?.contains(baseUrl.toUri().host ?: "")
+                        ?: false
+
+                    request?.url?.let {
+                        if (!isMileusUrl) {
+                            runOnUiThread {
+                                Intent(Intent.ACTION_VIEW).apply {
+                                    data = it
+                                    startActivity(this)
+                                }
+                            }
+                        }
+                    }
+                    return !isMileusUrl
                 }
 
                 override fun onPageFinished(view: WebView?, url: String?) {
