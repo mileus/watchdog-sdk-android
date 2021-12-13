@@ -5,9 +5,11 @@ import android.content.Context
 import android.content.Intent
 import com.mileus.watchdog.data.Location
 import com.mileus.watchdog.data.NotificationInfo
+import com.mileus.watchdog.data.OneTimeSearchStringKeys
 import com.mileus.watchdog.service.LocationUpdatesService
 import com.mileus.watchdog.ui.MarketValidationActivity
 import com.mileus.watchdog.ui.MileusActivity
+import com.mileus.watchdog.ui.OneTimeSearchActivity
 import com.mileus.watchdog.ui.WatchdogActivity
 
 /**
@@ -225,6 +227,30 @@ object MileusWatchdog {
     }
 
     /**
+     * Shortcut for starting the activity using [createOneTimeSearchActivityIntent].
+     */
+    fun startOneTimeSearchActivity(
+        context: Context,
+        stringsKeys: OneTimeSearchStringKeys
+    ) {
+        context.startActivity(createOneTimeSearchActivityIntent(context, stringsKeys))
+    }
+
+    /**
+     * Creates Intent for the one time search screen.
+     *
+     * @param context context used for creating the intent
+     * @param stringsKeys required strings keys for customizable texts
+     */
+    fun createOneTimeSearchActivityIntent(
+        context: Context,
+        stringsKeys: OneTimeSearchStringKeys
+    ) = Intent(context, OneTimeSearchActivity::class.java).updateExtras {
+        assertInitialized()
+        oneTimeSearchStringKeys = stringsKeys
+    }
+
+    /**
      * Call this method to initialize location searching for a scheduled watchdog.
      */
     fun onSearchStartingSoon(context: Context) {
@@ -248,4 +274,6 @@ object MileusWatchdog {
      * Thrown when trying to perform any operation without initializing the SDK first (using [init]).
      */
     class SdkUninitializedException : IllegalStateException("Mileus SDK hasn't been initialized.")
+
+    class InvalidStateException(message: String) : IllegalStateException(message)
 }

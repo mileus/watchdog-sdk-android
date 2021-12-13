@@ -16,6 +16,7 @@ import androidx.work.WorkManager
 import com.mileus.watchdog.MileusWatchdog
 import com.mileus.watchdog.data.Address
 import com.mileus.watchdog.data.Location
+import com.mileus.watchdog.data.OneTimeSearchStringKeys
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.concurrent.TimeUnit
 
@@ -27,6 +28,8 @@ class MainActivity : AppCompatActivity() {
         const val KEY_ENV = "KEY_ENV"
 
         const val PREF_SAMPLE_APP = "mileussampleapp"
+
+        const val TEXT_ID_ONE_TIME_BANNER = "one_time_search.hopin_default"
     }
 
     private lateinit var requestPermission: ActivityResultLauncher<String>
@@ -74,6 +77,15 @@ class MainActivity : AppCompatActivity() {
         main_open_watchdog_activity.setOnClickListener {
             handleButtonClick { origin, destination, _ ->
                 MileusWatchdog.startWatchdogActivity(this, origin, destination)
+            }
+        }
+
+        main_open_one_time.setOnClickListener {
+            handleButtonClick(false) { _, _, _ ->
+                MileusWatchdog.startOneTimeSearchActivity(
+                    this,
+                    OneTimeSearchStringKeys(TEXT_ID_ONE_TIME_BANNER)
+                )
             }
         }
 

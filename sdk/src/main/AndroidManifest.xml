@@ -14,6 +14,7 @@
 
         <activity android:name="com.mileus.watchdog.ui.WatchdogActivity" />
         <activity android:name="com.mileus.watchdog.ui.MarketValidationActivity" />
+        <activity android:name="com.mileus.watchdog.ui.OneTimeSearchActivity" />
 
     </application>
 

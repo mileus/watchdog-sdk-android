@@ -15,6 +15,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.webkit.*
+import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -143,7 +144,8 @@ abstract class MileusActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchIntentExtras() {
+    @CallSuper
+    protected open fun fetchIntentExtras() {
         origin = intent.extras?.origin
         destination = intent.extras?.destination
         home = intent.extras?.home
@@ -207,7 +209,20 @@ abstract class MileusActivity : AppCompatActivity() {
                     view: WebView?,
                     request: WebResourceRequest?
                 ): Boolean {
-                    return request?.url?.host?.contains(baseUrl.toUri().host ?: "")?.not() ?: false
+                    val isMileusUrl = request?.url?.host?.contains(baseUrl.toUri().host ?: "")
+                        ?: false
+
+                    request?.url?.let {
+                        if (!isMileusUrl) {
+                            runOnUiThread {
+                                Intent(Intent.ACTION_VIEW).apply {
+                                    data = it
+                                    startActivity(this)
+                                }
+                            }
+                        }
+                    }
+                    return !isMileusUrl
                 }
 
                 override fun onPageFinished(view: WebView?, url: String?) {
@@ -360,6 +375,20 @@ abstract class MileusActivity : AppCompatActivity() {
         startActivity(taxiRideActivityIntent)
     }
 
+    @JavascriptInterface
+    fun finishFlow() {
+        WebStorage.getInstance().deleteAllData()
+        finish()
+    }
+
+    @JavascriptInterface
+    fun finishFlowWithError(error: String) {
+        WebStorage.getInstance().deleteAllData()
+        runOnUiThread {
+            throw MileusWatchdog.InvalidStateException(error)
+        }
+    }
+
     private fun updateOriginInJs() {
         origin?.let {
             webview?.evaluateJavascript(
@@ -415,6 +444,8 @@ abstract class MileusActivity : AppCompatActivity() {
         webview?.evaluateJavascript("window.handleInfoIconClick();", null)
     }
 
+    protected open fun Uri.Builder.modifyUrl() {}
+
     private fun buildUrl() = Uri.parse(baseUrl)
         .buildUpon()
         .appendQueryParameter("partner_name", partnerName)
@@ -453,6 +484,7 @@ abstract class MileusActivity : AppCompatActivity() {
                     }
                 }
             }
+            modifyUrl()
             build().toString()
         }
 
@@ -499,6 +531,10 @@ abstract class MileusActivity : AppCompatActivity() {
         MARKET_VALIDATION(
             "market_validation",
             R.string.watchdog_title
+        ),
+        ONE_TIME_SEARCH(
+            "one_time_search",
+            null
         );
     }
 }

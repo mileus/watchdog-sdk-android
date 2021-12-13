@@ -3,6 +3,7 @@ package com.mileus.watchdog
 import android.content.Intent
 import android.os.Bundle
 import com.mileus.watchdog.data.Location
+import com.mileus.watchdog.data.OneTimeSearchStringKeys
 import com.mileus.watchdog.ui.MileusActivity
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.Call
@@ -117,6 +118,12 @@ var Bundle.searchType: String?
         putString(MileusWatchdog.SEARCH_TYPE, value)
     }
 
+internal var Bundle.oneTimeSearchStringKeys: OneTimeSearchStringKeys?
+    get() = getParcelable(BundleKeys.ONE_TIME_SEARCH_STRING_KEYS)
+    set(value) {
+        putParcelable(BundleKeys.ONE_TIME_SEARCH_STRING_KEYS, value)
+    }
+
 internal object BundleKeys {
     const val TOKEN = "TOKEN"
     const val PARTNER_NAME = "PARTNER_NAME"
@@ -126,6 +133,7 @@ internal object BundleKeys {
     const val ORIGIN = "ORIGIN"
     const val DESTINATION = "DESTINATION"
     const val HOME = "HOME"
+    const val ONE_TIME_SEARCH_STRING_KEYS = "ONE_TIME_SEARCH_STRING_KEYS"
 }
 
 internal fun Intent.updateExtras(block: Bundle.() -> Unit) = apply {

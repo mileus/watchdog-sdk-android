@@ -21,12 +21,12 @@ dependencies {
 }
 ```
 
-## Prerequisites
-Before launching any of the Watchdog activities (except for the Market Validation activity), the `ACCESS_FINE_LOCATION` permission must be granted. Note that it is a runtime permission, thus must be asked explicitly. If you attempt to run any of the activities without the permission, the activity will crash.
-You also need to set up foreground service notifications (see the section “Set up foreground service notifications”) before opening any (non-Market Validation) Watchdog activity.
-Lastly, you need to specify search screen intents that open Activities allowing the user to change the locations for home, origin and destination (again, this excludes Market Validation; see “Handle callbacks”).
+## Prerequisites (Watchdog and Scheduling only)
+Before launching the Watchdog or the Scheduling screen, the ACCESS_FINE_LOCATION permission must be granted. Note that it is a runtime permission, thus must be asked explicitly. If you attempt to run either of the activities without the permission, the activity will crash.
+You also need to set up foreground service notifications (see the section “Set up foreground service notifications”) before opening either activity.
+Lastly, you need to specify search screen intents that open Activities allowing the user to change the locations for home, origin and destination.
 
-## Create an instance
+## Initialise the SDK
 First you have to initialise the Mileus SDK. Call this method after you obtain the access token, before you call any of the other methods within the Mileus SDK:
 ``` kotlin
 MileusWatchdog.init(
@@ -43,7 +43,7 @@ MileusWatchdog.isInitialized
 ```
 
 ## Start Mileus SDK Watchdog screen
-This is a universal entry point in Mileus SDK Watchdog. Use it to initialise new search, as well as opening Mileus SDK Watchdog from notification.
+This is a universal entry point to the Mileus Watchdog screen. Use it to initialise new search, as well as opening Mileus Watchdog from notification.
 ``` kotlin
 MileusWatchdog.startWatchdogActivity(
     context: Context,
@@ -58,6 +58,30 @@ MileusWatchdog.createWatchdogActivityIntent(
     context: Context,
     origin: Location? = null,
     destination: Location? = null
+)
+```
+
+## Start Mileus SDK One Time Search screen
+This is the entry point of the One Time Search screen. You need to provide an object specifying what string keys (defined on the Mileus backend) to use for some specific messages:
+``` kotlin
+MileusWatchdog.startOneTimeSearchActivity(
+    context: Context,
+    stringKeys: OneTimeSearchStringKeys
+)
+```
+
+You can also use Intent or PendingIntent directly. The method above is just a shortcut for creating an intent and starting the Activity.
+``` kotlin
+MileusWatchdog.createOneTimeSearchActivityIntent(
+    context: Context,
+    stringKeys: OneTimeSearchStringKeys
+)
+```
+
+The class OneTimeSearchStringKeys is defined as follows:
+``` kotlin
+class OneTimeSearchStringKeys(
+    val keyMatchIntroBanner: String
 )
 ```
 
@@ -79,7 +103,7 @@ MileusWatchdog.createWatchdogSchedulingActivityIntent(
 ```
 
 ## Set up foreground service notifications
-In order to use the scheduled watchdog feature, you need to specify the notification modifier for the notification that will be displayed when a foreground service is running (this foreground service is going to be used for scanning the user’s location). Please set the following value before starting any (non-Market Validation) activity (otherwise it will crash). Note that it has to be set before the foreground service is started, so we strongly recommend doing it in your Application implementation (you do not have to initialise the SDK first):
+In order to use the scheduling watchdog feature, you need to specify the notification modifier for the notification that will be displayed when a foreground service is running (this foreground service is going to be used for scanning the user’s location). Please set the following value before starting Watchdog or Scheduling (otherwise it will crash). Note that it has to be set before the foreground service is started, so we strongly recommend doing it in your Application implementation (you do not have to initialise the SDK first):
 ``` kotlin
 MileusWatchdog.foregroundServiceNotificationInfo = NotificationInfo.Builder()
     .setChannel(channelId)
@@ -124,7 +148,7 @@ Finally, use `mileusTitleFont` to change the font of the Toolbar text.
 
 ## Handle callbacks
 ### Search for origin / destination / home
-Before opening any Mileus screens except Market Validation, configure Intents to open your location search activities. These should always be set in your Application class, since they don’t survive if your app gets killed:
+Before opening Watchdog or Scheduling, configure Intents to open your location search activities. These should always be set in your Application class, since they don’t survive if your app gets killed (and to avoid leaking by accidentally using the wrong context):
 ``` kotlin
 MileusWatchdog.originSearchActivityIntent = originSearchIntent
 MileusWatchdog.destinationSearchActivityIntent = destinationSearchIntent
